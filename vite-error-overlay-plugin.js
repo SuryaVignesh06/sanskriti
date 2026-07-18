@@ -1,4 +1,6 @@
-class ErrorOverlay {
+// Dummy class to avoid type errors
+class BaseClass { }
+export class ErrorOverlay extends BaseClass {
   static MESSAGE_TITLE = `We're having trouble displaying this page`;
   static MESSAGE_DESCRIPTION = `Something didn't load correctly on our end.`;
 
@@ -7,9 +9,8 @@ class ErrorOverlay {
       <link rel="stylesheet" href="https://static.parastorage.com/services/picasso-editor-page/f8267b91c2f1bf1ea5fa81a2788ab7b0acb2e6663c71a4cf74417530/569.chunk.min.css">
       <style>
         .error-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
+          align-items: center;
+          justify-content: center;
           width: 100%;
           height: 100%;
           background: white;
@@ -100,58 +101,69 @@ class ErrorOverlay {
     `;
   }
 
-	constructor(err) {
-		console.log('ErrorPage-style overlay constructor called with:', err);
+  static async sendErrorToParent(err, type) {
+    // Send error to parent using framewire
+    const isDev = import.meta.env?.DEV ?? false;
+    const isIframe = window.self !== window.top;
 
-    // Call editor frame with the error (via post message)
-		this.sendErrorToParent(err);
+    if (!isDev || !isIframe) {
+      return;
+    }
 
-    // Create the overlay element using HTML template
-		const overlay = document.createElement('div');
-		overlay.innerHTML = ErrorOverlay.getOverlayHTML();
-
-		// Add to DOM
-		document.body.appendChild(overlay);
-	}
-
-	sendErrorToParent(err) {
-		// Send error to parent using @wix/framewire
-    import('@wix/framewire').then(({ sendMessageToParent, EditorEventMessages }) => {
+    try {
+      const loadFramewire = (await import("framewire.js")).default;
+      await loadFramewire();
+      const { sendMessageToParent, EditorEventMessages } = globalThis.framewire;
       sendMessageToParent({
         type: EditorEventMessages.CLIENT_ERROR,
         clientErrorData: {
-          errorType: 'error',
+          errorType: type,
           message: err?.message || 'Unknown error',
           stack: err?.stack || 'No stack trace available',
         }
       });
-    }).catch(() => {
-      // ignore
-    });
-	}
-}
+    } catch (error) {
+      console.warn('Failed to send error to parent via framewire:', error?.message);
+    }
+  }
 
-function getOverlayCode() {
-	return `
-		${ErrorOverlay.toString()}
-	`;
-}
+  connectedCallback() {
+    this.style.position = 'fixed';
+    this.style.top = '0';
+    this.style.left = '0';
+    this.style.width = '100%';
+    this.style.height = '100%';
+    this.style.zIndex = '99999';
+    this.style.backgroundColor = 'white';
+    this.style.display = 'flex';
+    this.style.flexDirection = 'column';
+    this.innerHTML = ErrorOverlay.getOverlayHTML();
+  }
 
-function patchOverlay(code) {
-  return code.replace('class ErrorOverlay', getOverlayCode() + '\nclass OldErrorOverlay');
+  constructor(err, type) {
+    super();
+    console.log('ErrorPage overlay constructor called with:', err);
+
+    // Call editor frame with the error (via post message)
+    ErrorOverlay.sendErrorToParent(err, type || 'build');
+  }
 }
 
 // See https://github.com/withastro/astro/blob/main/packages/astro/src/vite-plugin-astro-server/plugin.ts#L157
-export default function customErrorOverlayPlugin() {
-	return {
-		name: 'custom-error-overlay',
-		transform(code, id, opts = {}) {
-			if (opts?.ssr) return;
+const customErrorOverlayPlugin = () => {
+  return {
+    name: 'custom-error-overlay',
+    transform(code, id, opts = {}) {
+      if (!id.includes('vite/dist/client/client.mjs') || opts?.ssr) {
+        return;
+      }
 
-			if (!id.includes('vite/dist/client/client.mjs')) return;
-
-			// Replace the Vite overlay with ours
-			return patchOverlay(code);
-		},
-	};
+      const errorOverlayCustomElement = ErrorOverlay.toString().replace('extends BaseClass', 'extends HTMLElement');
+      // Replace the Vite overlay with ours
+      return code.replace('class ErrorOverlay', `${errorOverlayCustomElement}
+      class OldErrorOverlay`);
+    },
+  };
 }
+
+export default customErrorOverlayPlugin;

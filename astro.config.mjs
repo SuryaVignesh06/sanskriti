@@ -1,13 +1,14 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import cloudflare from "@astrojs/cloudflare";
+import cloudProviderFetchAdapter from "@wix/cloud-provider-fetch-adapter";
 import wix from "@wix/astro";
+import monitoring from "@wix/monitoring-astro";
 import react from "@astrojs/react";
 import sourceAttrsPlugin from "@wix/babel-plugin-jsx-source-attrs";
 import dynamicDataPlugin from "@wix/babel-plugin-jsx-dynamic-data";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
 import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
+import postcssPseudoToData from "@wix/postcss-pseudo-to-data";
 
 const isBuild = process.env.NODE_ENV == "production";
 
@@ -22,9 +23,8 @@ export default defineConfig({
           if (command === "dev") {
             injectScript(
               "page",
-              `import { init } from "@wix/framewire";
-              console.log("Framewire initialized");
-              init();`,
+              `import loadFramewire from "framewire.js";
+              loadFramewire(true);`
             );
           }
         },
@@ -32,18 +32,41 @@ export default defineConfig({
     },
     tailwind(),
     wix({
-      enableHtmlEmbeds: isBuild,
-      enableAuthRoutes: true
+      htmlEmbeds: isBuild,
+      auth: true,
     }),
-    react({ babel: { plugins: [sourceAttrsPlugin, dynamicDataPlugin] } }),
+    ...(isBuild ? [monitoring()] : []),
+    react(isBuild ? {} : {
+      babel: { plugins: [sourceAttrsPlugin, dynamicDataPlugin] },
+    }),
   ],
   vite: {
-    plugins: [
-      customErrorOverlayPlugin(),
-      ...(isBuild ? [nodePolyfills()] : []),
-    ],
+    plugins: [customErrorOverlayPlugin()],
+    cacheDir: 'node_modules/.cache/.vite',
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'zustand',
+        'framer-motion',
+        'date-fns',
+        'clsx',
+        'class-variance-authority',
+        'tailwind-merge',
+        '@radix-ui/*',
+        '@wix/*',
+        'zod',
+      ],
+    },
+    css: !isBuild ? {
+      postcss: {
+        plugins: [
+          postcssPseudoToData(),
+        ],
+      },
+    } : undefined,
   },
-  adapter: isBuild ? cloudflare() : undefined,
+  ...(isBuild && { adapter: cloudProviderFetchAdapter({}) }),
   devToolbar: {
     enabled: false,
   },
@@ -54,4 +77,7 @@ export default defineConfig({
     allowedHosts: true,
     host: true,
   },
+  security: {
+    checkOrigin: false
+  }
 });
