@@ -1,11 +1,19 @@
 ---
+export const prerender = true;
+
 export function getStaticPaths() {
   return [
     { params: { slug: undefined } },
-    { params: { slug: 'login' } },
+    { params: { slug: 'explore' } },
     { params: { slug: 'states' } },
+    { params: { slug: 'festivals' } },
+    { params: { slug: 'learn-online' } },
+    { params: { slug: 'quizzes' } },
+    { params: { slug: 'become-ambassador' } },
+    { params: { slug: 'stories' } },
     { params: { slug: 'about' } },
     { params: { slug: 'profile' } },
+    { params: { slug: 'login' } },
   ];
 }
 

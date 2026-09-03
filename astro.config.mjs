@@ -1,7 +1,10 @@
 // @ts-check
+if (!process.env.WIX_CLIENT_ID) {
+  process.env.WIX_CLIENT_ID = 'mock-sanskriti-wix-client-id';
+}
+
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
-import cloudflare from "@astrojs/cloudflare";
 import wix from "@wix/astro";
 import monitoring from "@wix/monitoring-astro";
 import react from "@astrojs/react";
@@ -11,7 +14,6 @@ import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
 import postcssPseudoToData from "@wix/postcss-pseudo-to-data";
 
 const isBuild = process.env.NODE_ENV === "production";
-
 
 // https://astro.build/config
 export default defineConfig({
