@@ -1,407 +1,213 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMember } from '@/integrations';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Image } from '@/components/ui/image';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { motion } from 'framer-motion';
-import { User, Mail, Calendar, Award, BookOpen, MapPin, Settings, Crown, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { SafeImage } from '@/components/ui/SafeImage';
+import { User, Calendar, Bookmark, Video, Award, MessageSquare, Settings, ShieldCheck, MapPin } from 'lucide-react';
+import { CULTURAL_EXPERIENCES, CULTURAL_QUIZZES, ONLINE_CLASSES } from '@/lib/sanskritiData';
 
 export default function ProfilePage() {
-  const { member } = useMember();
-  const [achievements] = useState([
-    { id: 1, name: "Cultural Explorer", description: "Visited 5 states", icon: MapPin, earned: true },
-    { id: 2, name: "Dance Enthusiast", description: "Learned 3 dance forms", icon: Star, earned: true },
-    { id: 3, name: "Mudra Master", description: "Mastered 10 mudras", icon: Award, earned: false },
-    { id: 4, name: "Heritage Hero", description: "Completed all states", icon: Crown, earned: false }
-  ]);
+  const { member, actions } = useMember();
+  const [activeTab, setActiveTab] = useState<'trips' | 'saved' | 'classes' | 'badges' | 'messages' | 'settings'>('trips');
 
-  const [learningProgress] = useState([
-    { state: "Andhra Pradesh", progress: 85, completed: 12, total: 15 },
-    { state: "Tamil Nadu", progress: 60, completed: 8, total: 14 },
-    { state: "Kerala", progress: 30, completed: 4, total: 12 },
-    { state: "Karnataka", progress: 15, completed: 2, total: 13 }
-  ]);
+  const sampleTrips = [
+    {
+      id: 'trip-1',
+      experience: CULTURAL_EXPERIENCES[0],
+      date: 'March 14, 2026',
+      guests: 2,
+      status: 'Confirmed',
+      refCode: 'SAN-883920'
+    }
+  ];
 
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return 'Not available';
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(new Date(date));
-  };
+  const earnedBadges = [
+    { name: 'Natyashastra Scholar', date: 'Earned March 2, 2026', category: 'Dance & Art' },
+    { name: 'Festival Explorer', date: 'Earned Feb 24, 2026', category: 'Festivals' }
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Profile Header */}
-      <section className="relative py-16 bg-gradient-to-br from-secondary/30 to-background">
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center space-y-6"
-          >
-            <div className="relative inline-block">
-              <div className="w-32 h-32 mx-auto rounded-full overflow-hidden bg-secondary border-4 border-primary/20">
-                {member?.profile?.photo?.url ? (
-                  <Image
-                    src={member.profile.photo.url}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                    width={128}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                    <User className="w-16 h-16 text-primary/50" />
-                  </div>
-                )}
-              </div>
-              <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground rounded-full p-2">
-                <Crown className="w-4 h-4" />
-              </div>
+    <div className="bg-background text-foreground font-paragraph min-h-screen py-16">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 space-y-12">
+        {/* Profile User Header */}
+        <div className="bg-surface border border-secondary p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-accent text-foreground rounded-full flex items-center justify-center font-heading text-2xl font-bold">
+              {member?.profile?.nickname ? member.profile.nickname[0].toUpperCase() : 'C'}
             </div>
-
-            <div className="space-y-2">
-              <h1 className="font-heading text-4xl text-primary">
-                {member?.profile?.nickname || 
-                 `${member?.contact?.firstName || ''} ${member?.contact?.lastName || ''}`.trim() || 
-                 'Cultural Explorer'}
+            <div>
+              <h1 className="font-heading text-3xl text-foreground">
+                {member?.profile?.nickname || member?.contact?.firstName || 'Cultural Explorer'}
               </h1>
-              <p className="font-paragraph text-lg text-primary/70">
-                {member?.profile?.title || 'Heritage Enthusiast'}
-              </p>
+              <p className="text-xs text-muted">Member ID: {(member as any)?.id || 'MEM-2026-X8'}</p>
+              <span className="inline-flex items-center px-2 py-0.5 bg-accent/20 text-accent-dark text-[10px] font-bold rounded mt-1">
+                Verified Cultural Explorer
+              </span>
             </div>
+          </div>
 
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <div className="flex items-center space-x-2 bg-background/50 px-4 py-2 rounded-full">
-                <Mail className="w-4 h-4 text-primary" />
-                <span className="font-paragraph text-primary/70">
-                  {member?.loginEmail || 'No email provided'}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2 bg-background/50 px-4 py-2 rounded-full">
-                <Calendar className="w-4 h-4 text-primary" />
-                <span className="font-paragraph text-primary/70">
-                  Joined {formatDate(member?._createdDate)}
-                </span>
-              </div>
-            </div>
-          </motion.div>
+          <div className="flex gap-3">
+            <button
+              onClick={actions.logout}
+              className="px-4 py-2 border border-secondary text-xs font-semibold rounded-lg hover:bg-secondary"
+            >
+              SIGN OUT
+            </button>
+          </div>
         </div>
-      </section>
 
-      {/* Profile Content */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-12">
-          <Tabs defaultValue="overview" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 bg-secondary/20">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <User className="w-4 h-4 mr-2" />
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="progress" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Learning Progress
-              </TabsTrigger>
-              <TabsTrigger value="achievements" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Award className="w-4 h-4 mr-2" />
-                Achievements
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
-              </TabsTrigger>
-            </TabsList>
+        {/* Navigation Tabs */}
+        <div className="flex overflow-x-auto pb-2 border-b border-secondary gap-4 no-scrollbar">
+          <button
+            onClick={() => setActiveTab('trips')}
+            className={`pb-3 font-heading text-lg tracking-wider transition-all border-b-2 shrink-0 flex items-center space-x-2 ${
+              activeTab === 'trips' ? 'border-accent text-foreground font-bold' : 'border-transparent text-muted'
+            }`}
+          >
+            <Calendar className="w-4 h-4 text-accent-dark" />
+            <span>MY TRIPS ({sampleTrips.length})</span>
+          </button>
 
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <Card className="p-6 bg-background border-secondary">
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <MapPin className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-heading text-lg text-primary">States Explored</h3>
-                          <p className="font-paragraph text-2xl font-bold text-primary">4</p>
-                        </div>
-                      </div>
-                      <p className="font-paragraph text-sm text-primary/70">
-                        Continue exploring to unlock more cultural treasures
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div>
+          <button
+            onClick={() => setActiveTab('badges')}
+            className={`pb-3 font-heading text-lg tracking-wider transition-all border-b-2 shrink-0 flex items-center space-x-2 ${
+              activeTab === 'badges' ? 'border-accent text-foreground font-bold' : 'border-transparent text-muted'
+            }`}
+          >
+            <Award className="w-4 h-4 text-accent-dark" />
+            <span>QUIZ BADGES ({earnedBadges.length})</span>
+          </button>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                >
-                  <Card className="p-6 bg-background border-secondary">
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Star className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-heading text-lg text-primary">Dance Forms</h3>
-                          <p className="font-paragraph text-2xl font-bold text-primary">3</p>
-                        </div>
-                      </div>
-                      <p className="font-paragraph text-sm text-primary/70">
-                        Kuchipudi, Bharatanatyam, Kathak learned
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div>
+          <button
+            onClick={() => setActiveTab('saved')}
+            className={`pb-3 font-heading text-lg tracking-wider transition-all border-b-2 shrink-0 flex items-center space-x-2 ${
+              activeTab === 'saved' ? 'border-accent text-foreground font-bold' : 'border-transparent text-muted'
+            }`}
+          >
+            <Bookmark className="w-4 h-4 text-accent-dark" />
+            <span>SAVED</span>
+          </button>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                  <Card className="p-6 bg-background border-secondary">
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Award className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-heading text-lg text-primary">Achievements</h3>
-                          <p className="font-paragraph text-2xl font-bold text-primary">2</p>
-                        </div>
-                      </div>
-                      <p className="font-paragraph text-sm text-primary/70">
-                        Cultural Explorer, Dance Enthusiast earned
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div>
-              </div>
+          <button
+            onClick={() => setActiveTab('classes')}
+            className={`pb-3 font-heading text-lg tracking-wider transition-all border-b-2 shrink-0 flex items-center space-x-2 ${
+              activeTab === 'classes' ? 'border-accent text-foreground font-bold' : 'border-transparent text-muted'
+            }`}
+          >
+            <Video className="w-4 h-4 text-accent-dark" />
+            <span>LIVE CLASSES</span>
+          </button>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <Card className="p-8 bg-secondary/10 border-secondary">
-                  <div className="space-y-6">
-                    <h2 className="font-heading text-2xl text-primary">Recent Activity</h2>
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-4 p-4 bg-background rounded-lg">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <div className="flex-1">
-                          <p className="font-paragraph text-primary">Completed Kuchipudi mudras section</p>
-                          <p className="font-paragraph text-sm text-primary/60">2 hours ago</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4 p-4 bg-background rounded-lg">
-                        <div className="w-2 h-2 bg-primary/50 rounded-full"></div>
-                        <div className="flex-1">
-                          <p className="font-paragraph text-primary">Explored Andhra Pradesh deities</p>
-                          <p className="font-paragraph text-sm text-primary/60">1 day ago</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4 p-4 bg-background rounded-lg">
-                        <div className="w-2 h-2 bg-primary/30 rounded-full"></div>
-                        <div className="flex-1">
-                          <p className="font-paragraph text-primary">Started Tamil Nadu cultural journey</p>
-                          <p className="font-paragraph text-sm text-primary/60">3 days ago</p>
-                        </div>
-                      </div>
+          <button
+            onClick={() => setActiveTab('messages')}
+            className={`pb-3 font-heading text-lg tracking-wider transition-all border-b-2 shrink-0 flex items-center space-x-2 ${
+              activeTab === 'messages' ? 'border-accent text-foreground font-bold' : 'border-transparent text-muted'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4 text-accent-dark" />
+            <span>MESSAGES</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`pb-3 font-heading text-lg tracking-wider transition-all border-b-2 shrink-0 flex items-center space-x-2 ${
+              activeTab === 'settings' ? 'border-accent text-foreground font-bold' : 'border-transparent text-muted'
+            }`}
+          >
+            <Settings className="w-4 h-4 text-accent-dark" />
+            <span>SETTINGS</span>
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        <div className="space-y-6">
+          {activeTab === 'trips' && (
+            <div className="space-y-4">
+              {sampleTrips.map((trip) => (
+                <div key={trip.id} className="bg-surface border border-secondary rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center space-x-4">
+                    <SafeImage src={trip.experience.image} alt={trip.experience.title} className="w-24 h-20 rounded-lg object-cover" />
+                    <div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded uppercase">
+                        {trip.status}
+                      </span>
+                      <h4 className="font-heading text-xl text-foreground mt-1">{trip.experience.title}</h4>
+                      <p className="text-xs text-muted">{trip.experience.location} · Date: {trip.date}</p>
+                      <p className="text-[10px] text-muted">Booking Reference: {trip.refCode}</p>
                     </div>
                   </div>
-                </Card>
-              </motion.div>
-            </TabsContent>
-
-            {/* Learning Progress Tab */}
-            <TabsContent value="progress" className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
-                <h2 className="font-heading text-3xl text-primary">Learning Progress</h2>
-                
-                {learningProgress.map((state, index) => (
-                  <Card key={state.state} className="p-6 bg-background border-secondary">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-heading text-xl text-primary">{state.state}</h3>
-                        <span className="font-paragraph text-sm text-primary/70">
-                          {state.completed}/{state.total} completed
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="font-paragraph text-primary/70">Progress</span>
-                          <span className="font-paragraph text-primary font-semibold">{state.progress}%</span>
-                        </div>
-                        <div className="w-full bg-secondary/30 rounded-full h-2">
-                          <motion.div
-                            className="bg-primary h-2 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${state.progress}%` }}
-                            transition={{ duration: 1, delay: index * 0.2 }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </motion.div>
-            </TabsContent>
-
-            {/* Achievements Tab */}
-            <TabsContent value="achievements" className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
-                <h2 className="font-heading text-3xl text-primary">Achievements & Badges</h2>
-                
-                <div className="grid md:grid-cols-2 gap-6">
-                  {achievements.map((achievement, index) => (
-                    <motion.div
-                      key={achievement.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                    >
-                      <Card className={`p-6 border-secondary transition-all duration-300 ${
-                        achievement.earned 
-                          ? 'bg-primary/5 border-primary/30 shadow-lg' 
-                          : 'bg-background opacity-60'
-                      }`}>
-                        <div className="flex items-center space-x-4">
-                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                            achievement.earned 
-                              ? 'bg-primary/20 text-primary' 
-                              : 'bg-secondary/30 text-primary/40'
-                          }`}>
-                            <achievement.icon className="w-6 h-6" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2">
-                              <h3 className="font-heading text-lg text-primary">
-                                {achievement.name}
-                              </h3>
-                              {achievement.earned && (
-                                <Badge className="bg-primary text-primary-foreground">
-                                  Earned
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="font-paragraph text-sm text-primary/70">
-                              {achievement.description}
-                            </p>
-                          </div>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  ))}
+                  <Link
+                    to={`/experience/${trip.experience.id}`}
+                    className="px-5 py-2.5 bg-foreground text-background text-xs font-bold rounded-lg shrink-0"
+                  >
+                    VIEW EXPERIENCE DETAILS
+                  </Link>
                 </div>
-              </motion.div>
-            </TabsContent>
+              ))}
+            </div>
+          )}
 
-            {/* Settings Tab */}
-            <TabsContent value="settings" className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
-                <h2 className="font-heading text-3xl text-primary">Account Settings</h2>
-                
-                <Card className="p-8 bg-background border-secondary">
-                  <div className="space-y-6">
-                    <div className="space-y-4">
-                      <h3 className="font-heading text-xl text-primary">Profile Information</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="font-paragraph text-sm text-primary/70 block mb-2">
-                            Display Name
-                          </label>
-                          <p className="font-paragraph text-primary p-3 bg-secondary/20 rounded-lg">
-                            {member?.profile?.nickname || 'Not set'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="font-paragraph text-sm text-primary/70 block mb-2">
-                            Email
-                          </label>
-                          <p className="font-paragraph text-primary p-3 bg-secondary/20 rounded-lg">
-                            {member?.loginEmail || 'Not available'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-secondary pt-6">
-                      <h3 className="font-heading text-xl text-primary mb-4">Preferences</h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-secondary/10 rounded-lg">
-                          <div>
-                            <h4 className="font-heading text-primary">AI Voice Reader</h4>
-                            <p className="font-paragraph text-sm text-primary/70">
-                              Enable text-to-speech for cultural content
-                            </p>
-                          </div>
-                          <Badge variant="outline" className="border-primary text-primary">
-                            Enabled
-                          </Badge>
-                        </div>
-                        <div className="flex items-center justify-between p-4 bg-secondary/10 rounded-lg">
-                          <div>
-                            <h4 className="font-heading text-primary">Progress Notifications</h4>
-                            <p className="font-paragraph text-sm text-primary/70">
-                              Get notified about learning milestones
-                            </p>
-                          </div>
-                          <Badge variant="outline" className="border-primary text-primary">
-                            Enabled
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-secondary pt-6">
-                      <h3 className="font-heading text-xl text-primary mb-4">Account Status</h3>
-                      <div className="space-y-2">
-                        <p className="font-paragraph text-primary/70">
-                          <strong>Member since:</strong> {formatDate(member?._createdDate)}
-                        </p>
-                        <p className="font-paragraph text-primary/70">
-                          <strong>Last login:</strong> {formatDate(member?.lastLoginDate)}
-                        </p>
-                        <p className="font-paragraph text-primary/70">
-                          <strong>Email verified:</strong> {member?.loginEmailVerified ? 'Yes' : 'No'}
-                        </p>
-                      </div>
-                    </div>
+          {activeTab === 'badges' && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {earnedBadges.map((badge, idx) => (
+                <div key={idx} className="bg-surface border border-secondary rounded-xl p-6 text-center space-y-3">
+                  <div className="w-16 h-16 bg-accent/20 text-accent-dark rounded-full flex items-center justify-center mx-auto">
+                    <Award className="w-8 h-8" />
                   </div>
-                </Card>
-              </motion.div>
-            </TabsContent>
-          </Tabs>
+                  <h4 className="font-heading text-xl text-foreground">{badge.name}</h4>
+                  <p className="text-xs text-muted">{badge.category} · {badge.date}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeTab === 'saved' && (
+            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+              <p className="text-xs text-muted">No saved experiences yet. Browse experiences and click save to keep them here.</p>
+              <Link to="/explore" className="inline-block px-5 py-2.5 bg-accent text-foreground text-xs font-bold rounded">
+                EXPLORE EXPERIENCES
+              </Link>
+            </div>
+          )}
+
+          {activeTab === 'classes' && (
+            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+              <p className="text-xs text-muted">No live virtual classes registered yet.</p>
+              <Link to="/learn-online" className="inline-block px-5 py-2.5 bg-accent text-foreground text-xs font-bold rounded">
+                EXPLORE LIVE VIRTUAL CLASSES
+              </Link>
+            </div>
+          )}
+
+          {activeTab === 'messages' && (
+            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+              <p className="text-xs text-muted">Your host messages will appear here once an experience is booked.</p>
+            </div>
+          )}
+
+          {activeTab === 'settings' && (
+            <div className="p-8 bg-surface border border-secondary rounded-xl space-y-4 max-w-md">
+              <h4 className="font-heading text-xl text-foreground">ACCOUNT PREFERENCES</h4>
+              <div className="space-y-3 text-xs font-paragraph">
+                <div>
+                  <label className="block text-muted mb-1 font-bold">DISPLAY NICKNAME</label>
+                  <input
+                    type="text"
+                    defaultValue={member?.profile?.nickname || 'Cultural Explorer'}
+                    className="w-full p-2.5 bg-background border border-secondary rounded text-foreground"
+                  />
+                </div>
+                <div>
+                  <label className="block text-muted mb-1 font-bold">EMAIL NOTIFICATIONS</label>
+                  <select className="w-full p-2.5 bg-background border border-secondary rounded text-foreground">
+                    <option>All booking & message alerts</option>
+                    <option>Important booking updates only</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      </section>
+      </div>
     </div>
   );
 }

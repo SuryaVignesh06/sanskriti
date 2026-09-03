@@ -1,503 +1,194 @@
-import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { BaseCrudService } from '@/integrations';
-import { States } from '@/entities/states';
-import { CulturalElements } from '@/entities/culturalelements';
-import { Deities } from '@/entities/deities';
-import { IndianDanceForms } from '@/entities/indiandanceforms';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Image } from '@/components/ui/image';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { motion } from 'framer-motion';
-import { Play, Volume2, BookOpen, Sparkles, ArrowLeft, ExternalLink, Crown } from 'lucide-react';
+import { SafeImage } from '@/components/ui/SafeImage';
+import { INDIAN_STATES, CULTURAL_EXPERIENCES, CULTURAL_AMBASSADORS, CULTURAL_QUIZZES } from '@/lib/sanskritiData';
+
+import { MapPin, ArrowLeft, ShieldCheck, ArrowRight, Award, Sparkles, BookOpen } from 'lucide-react';
 
 export default function StateCulturePage() {
   const { stateKey } = useParams<{ stateKey: string }>();
-  const [state, setState] = useState<States | null>(null);
-  const [culturalElements, setCulturalElements] = useState<CulturalElements[]>([]);
-  const [deities, setDeities] = useState<Deities[]>([]);
-  const [dances, setDances] = useState<IndianDanceForms[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [speakingElement, setSpeakingElement] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!stateKey) return;
-      
-      try {
-        // Fetch state info
-        const { items: stateItems } = await BaseCrudService.getAll<States>('states');
-        const currentState = stateItems.find(s => 
-          s.stateKey === stateKey || 
-          s.stateName?.toLowerCase().replace(/\s+/g, '-') === stateKey
-        );
-        setState(currentState || null);
-
-        // Fetch cultural elements
-        const { items: culturalItems } = await BaseCrudService.getAll<CulturalElements>('culturalelements');
-        setCulturalElements(culturalItems);
-
-        // Fetch deities for this state
-        const { items: deityItems } = await BaseCrudService.getAll<Deities>('deities');
-        const stateDeities = deityItems.filter(deity => 
-          deity.stateName?.toLowerCase() === currentState?.stateName?.toLowerCase()
-        );
-        setDeities(stateDeities);
-
-        // Fetch dance forms
-        const { items: danceItems } = await BaseCrudService.getAll<IndianDanceForms>('indiandanceforms');
-        setDances(danceItems);
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [stateKey]);
-
-  const speakText = (text: string, elementId: string) => {
-    if ('speechSynthesis' in window) {
-      // Stop any ongoing speech
-      window.speechSynthesis.cancel();
-      
-      if (speakingElement === elementId) {
-        setSpeakingElement(null);
-        return;
-      }
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.8;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      
-      utterance.onstart = () => setSpeakingElement(elementId);
-      utterance.onend = () => setSpeakingElement(null);
-      utterance.onerror = () => setSpeakingElement(null);
-      
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const categories = [
-    { id: 'all', name: 'All Elements', count: culturalElements.length },
-    { id: 'dance', name: 'Dance Forms', count: dances.length },
-    { id: 'festival', name: 'Festivals', count: culturalElements.filter(e => e.elementType === 'festival').length },
-    { id: 'cuisine', name: 'Cuisine', count: culturalElements.filter(e => e.elementType === 'cuisine').length },
-    { id: 'craft', name: 'Crafts', count: culturalElements.filter(e => e.elementType === 'craft').length },
-    { id: 'deities', name: 'Deities', count: deities.length }
-  ];
-
-  const getFilteredElements = () => {
-    if (selectedCategory === 'all') {
-      return culturalElements;
-    }
-    if (selectedCategory === 'dance') {
-      return [];
-    }
-    if (selectedCategory === 'deities') {
-      return [];
-    }
-    return culturalElements.filter(element => element.elementType === selectedCategory);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (!state) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h1 className="font-heading text-2xl text-primary">State Not Found</h1>
-          <Button asChild>
-            <Link to="/states">Back to States</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const stateData = INDIAN_STATES.find(s => s.key === stateKey) || INDIAN_STATES[0];
+  const stateExperiences = CULTURAL_EXPERIENCES.filter(e => e.stateKey === stateData.key);
+  const stateAmbassadors = CULTURAL_AMBASSADORS.filter(a => a.stateKey === stateData.key);
+  const stateQuiz = CULTURAL_QUIZZES.find(q => q.stateKey === stateData.key) || CULTURAL_QUIZZES[0];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src={state.stateImage || "https://static.wixstatic.com/media/4faed4_c202d1e86de64ddf9fd1d2aa32a9ecdc~mv2.png?originWidth=1920&originHeight=1024"}
-            alt={state.stateName || 'State'}
-            className="w-full h-full object-cover"
-            width={1920}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/95" />
+    <div className="bg-background text-foreground font-paragraph min-h-screen pb-24">
+      {/* Top Breadcrumb Nav */}
+      <div className="bg-surface border-b border-secondary py-4">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 flex items-center space-x-2 text-xs text-muted">
+          <Link to="/states" className="hover:text-foreground flex items-center">
+            <ArrowLeft className="w-3.5 h-3.5 mr-1" /> All States
+          </Link>
+          <span>/</span>
+          <span className="text-foreground font-semibold">{stateData.name}</span>
         </div>
+      </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <Button variant="outline" asChild className="border-primary text-primary hover:bg-primary/10">
-              <Link to="/states">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to States
-              </Link>
-            </Button>
+      {/* State Hero Banner */}
+      <section className="relative h-[50vh] min-h-[360px] flex items-end overflow-hidden bg-foreground text-background">
+        <SafeImage
+          src={stateData.bannerImage || stateData.image}
+          alt={stateData.name}
+          className="absolute inset-0 w-full h-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent" />
 
-            <div className="space-y-4">
-              <h1 className="font-heading text-5xl lg:text-6xl text-primary">
-                {state.stateName}
-              </h1>
-              <p className="font-paragraph text-xl text-primary/70 max-w-3xl">
-                {state.description || "Explore the rich cultural heritage and traditions of this magnificent state."}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-              {state.youtubeLink && (
-                <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  <a href={state.youtubeLink} target="_blank" rel="noopener noreferrer">
-                    <Play className="w-4 h-4 mr-2" />
-                    Watch Introduction
-                  </a>
-                </Button>
-              )}
-              <Button 
-                variant="outline" 
-                onClick={() => speakText(state.description || '', 'state-description')}
-                className="border-primary text-primary hover:bg-primary/10"
-              >
-                <Volume2 className={`w-4 h-4 mr-2 ${speakingElement === 'state-description' ? 'animate-pulse' : ''}`} />
-                {speakingElement === 'state-description' ? 'Stop Reading' : 'Listen'}
-              </Button>
-            </div>
-          </motion.div>
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 pb-12 w-full space-y-3">
+          <span className="px-3 py-1 bg-accent text-foreground text-xs font-bold uppercase rounded-full">
+            {stateData.region} REGION · CAPITAL: {stateData.capital.toUpperCase()}
+          </span>
+          <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-background tracking-tight">
+            {stateData.name.toUpperCase()} CULTURAL HERITAGE
+          </h1>
+          <p className="font-paragraph text-background/80 text-base max-w-2xl">
+            {stateData.description}
+          </p>
         </div>
       </section>
 
-      {/* Category Filter */}
-      <section className="py-8 bg-secondary/20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex flex-wrap gap-3">
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category.id)}
-                className={selectedCategory === category.id 
-                  ? "bg-primary text-primary-foreground" 
-                  : "border-primary text-primary hover:bg-primary/10"
-                }
-              >
-                {category.name}
-                <span className="ml-2 text-xs bg-primary-foreground/20 px-2 py-1 rounded-full">
-                  {category.count}
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-16 space-y-16">
+        {/* Section: Historical Heritage Highlight */}
+        <div className="p-8 bg-surface border border-secondary rounded-2xl space-y-3">
+          <div className="flex items-center space-x-2 text-accent-dark font-heading text-sm uppercase">
+            <Sparkles className="w-4 h-4" />
+            <span>HISTORICAL LEGACY</span>
+          </div>
+          <p className="font-paragraph text-sm text-foreground leading-relaxed">
+            {stateData.historyHighlight}
+          </p>
+        </div>
+
+        {/* Section: Dance Forms & Sacred Shrines */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Dance Forms */}
+          <div className="bg-surface border border-secondary p-8 rounded-2xl space-y-6">
+            <h3 className="font-heading text-3xl text-foreground">DANCE FORMS & DRAMA</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {stateData.danceForms.map((dance) => (
+                <div key={dance} className="p-4 bg-background border border-secondary rounded-xl text-center">
+                  <p className="font-heading text-lg text-foreground">{dance}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sacred Deities & Shrines */}
+          <div className="bg-surface border border-secondary p-8 rounded-2xl space-y-6">
+            <h3 className="font-heading text-3xl text-foreground">SACRED SHRINES & DEITIES</h3>
+            <div className="space-y-3">
+              {stateData.deities.map((deity) => (
+                <div key={deity} className="flex items-center space-x-3 p-3.5 bg-background border border-secondary rounded-xl">
+                  <MapPin className="w-4 h-4 text-accent-dark shrink-0" />
+                  <span className="font-paragraph text-sm font-semibold text-foreground">{deity}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Section: Culinary Traditions & Artisan Crafts */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Cuisines */}
+          <div className="bg-surface border border-secondary p-8 rounded-2xl space-y-6">
+            <h3 className="font-heading text-3xl text-foreground">REGIONAL CUISINE & FLAVORS</h3>
+            <div className="flex flex-wrap gap-2">
+              {stateData.cuisines.map((food) => (
+                <span key={food} className="px-4 py-2 bg-background border border-secondary rounded-full font-paragraph text-xs font-semibold text-foreground">
+                  {food}
                 </span>
-              </Button>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Master Crafts */}
+          <div className="bg-surface border border-secondary p-8 rounded-2xl space-y-6">
+            <h3 className="font-heading text-3xl text-foreground">ARTISAN CRAFTS & TEXTILES</h3>
+            <div className="flex flex-wrap gap-2">
+              {stateData.crafts.map((craft) => (
+                <span key={craft} className="px-4 py-2 bg-accent/10 border border-accent/40 rounded-full font-paragraph text-xs font-semibold text-foreground">
+                  {craft}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Deities Section */}
-      {(selectedCategory === 'all' || selectedCategory === 'deities') && deities.length > 0 && (
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-12"
-            >
-              <div className="flex items-center space-x-3 mb-4">
-                <Crown className="w-8 h-8 text-primary" />
-                <h2 className="font-heading text-3xl lg:text-4xl text-primary">
-                  Sacred Deities
-                </h2>
-              </div>
-              <p className="font-paragraph text-lg text-primary/70">
-                Discover the divine traditions and spiritual heritage of {state.stateName}
-              </p>
-            </motion.div>
+        {/* Section: Bookable Experiences in this State */}
+        <div className="space-y-8 pt-8 border-t border-secondary">
+          <div className="flex justify-between items-end">
+            <div>
+              <span className="font-heading text-xs text-accent-dark tracking-widest uppercase">AUTHENTIC PARTICIPATION</span>
+              <h3 className="font-heading text-4xl text-foreground mt-1">EXPERIENCES IN {stateData.name.toUpperCase()}</h3>
+            </div>
+            <Link to="/explore" className="text-xs font-bold text-foreground hover:text-accent-dark flex items-center">
+              <span>EXPLORE ALL EXPERIENCES</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {deities.map((deity, index) => (
-                <motion.div
-                  key={deity._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="overflow-hidden bg-background border-secondary hover:shadow-lg transition-all duration-300 h-full">
-                    <div className="relative h-48">
-                      <Image
-                        src={deity.deityImage || "https://static.wixstatic.com/media/4faed4_3394b1755635465bb9ac55269f2652ad~mv2.png?originWidth=384&originHeight=448"}
-                        alt={deity.deityName || 'Deity'}
-                        className="w-full h-full object-cover"
-                        width={400}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <h3 className="font-heading text-lg text-white">
-                          {deity.deityName}
-                        </h3>
-                      </div>
+          {stateExperiences.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {stateExperiences.map((exp) => (
+                <div key={exp.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm flex flex-col justify-between">
+                  <div className="h-52 relative">
+                    <SafeImage src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
+                    <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
+                      {exp.category}
                     </div>
-                    
-                    <div className="p-6 space-y-4">
-                      <Accordion type="single" collapsible>
-                        <AccordionItem value="history" className="border-secondary">
-                          <AccordionTrigger className="font-heading text-primary hover:text-primary/80">
-                            <div className="flex items-center space-x-2">
-                              <BookOpen className="w-4 h-4" />
-                              <span>History & Significance</span>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="space-y-4">
-                            {deity.history && (
-                              <div>
-                                <h4 className="font-heading text-sm text-primary mb-2">History</h4>
-                                <p className="font-paragraph text-sm text-primary/70">
-                                  {deity.history}
-                                </p>
-                              </div>
-                            )}
-                            {deity.culturalSignificance && (
-                              <div>
-                                <h4 className="font-heading text-sm text-primary mb-2">Cultural Significance</h4>
-                                <p className="font-paragraph text-sm text-primary/70">
-                                  {deity.culturalSignificance}
-                                </p>
-                              </div>
-                            )}
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => speakText(
-                            `${deity.deityName}. ${deity.history} ${deity.culturalSignificance}`, 
-                            `deity-${deity._id}`
-                          )}
-                          className="border-primary text-primary hover:bg-primary/10"
-                        >
-                          <Volume2 className={`w-4 h-4 mr-1 ${speakingElement === `deity-${deity._id}` ? 'animate-pulse' : ''}`} />
-                          {speakingElement === `deity-${deity._id}` ? 'Stop' : 'Listen'}
-                        </Button>
-                        {deity.youtubeUrl && (
-                          <Button variant="outline" size="sm" asChild className="border-primary text-primary hover:bg-primary/10">
-                            <a href={deity.youtubeUrl} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4 mr-1" />
-                              Video
-                            </a>
-                          </Button>
-                        )}
-                      </div>
+                  </div>
+                  <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-heading text-xl text-foreground">{exp.title}</h4>
+                      <p className="text-xs text-muted mt-1">{exp.location} · {exp.duration}</p>
                     </div>
-                  </Card>
-                </motion.div>
+                    <div className="pt-3 border-t border-secondary flex justify-between items-center">
+                      <span className="font-heading text-lg text-foreground">₹{exp.priceINR}</span>
+                      <Link
+                        to={`/experience/${exp.id}`}
+                        className="px-4 py-2 bg-foreground text-background font-paragraph text-xs font-bold rounded"
+                      >
+                        VIEW DETAILS
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Dance Forms Section */}
-      {(selectedCategory === 'all' || selectedCategory === 'dance') && dances.length > 0 && (
-        <section className="py-16 bg-secondary/10">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-12"
-            >
-              <div className="flex items-center space-x-3 mb-4">
-                <Sparkles className="w-8 h-8 text-primary" />
-                <h2 className="font-heading text-3xl lg:text-4xl text-primary">
-                  Classical Dance Forms
-                </h2>
-              </div>
-              <p className="font-paragraph text-lg text-primary/70">
-                Explore the graceful movements and expressions of traditional dances
+          ) : (
+            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+              <p className="font-paragraph text-sm text-muted">
+                Cultural Ambassador experiences for {stateData.name} are being added weekly.
               </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {dances.map((dance, index) => (
-                <motion.div
-                  key={dance._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="overflow-hidden bg-background border-secondary hover:shadow-lg transition-all duration-300 h-full">
-                    <div className="relative h-48">
-                      <Image
-                        src={dance.costumeImage || "https://static.wixstatic.com/media/4faed4_6421d1b9fcef4247a73fa5d61de5c726~mv2.png?originWidth=384&originHeight=448"}
-                        alt={dance.danceName || 'Dance'}
-                        className="w-full h-full object-cover"
-                        width={400}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <h3 className="font-heading text-lg text-white">
-                          {dance.danceName}
-                        </h3>
-                      </div>
-                      {dance.arTryOnAvailable && (
-                        <div className="absolute top-3 right-3">
-                          <span className="bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-paragraph">
-                            AR Try-On
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="p-6 space-y-4">
-                      <div className="flex gap-2">
-                        <Button asChild size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
-                          <Link to={`/dance/${dance._id}`}>
-                            Explore Details
-                          </Link>
-                        </Button>
-                        {dance.youtubeLink && (
-                          <Button variant="outline" size="sm" asChild className="border-primary text-primary hover:bg-primary/10">
-                            <a href={dance.youtubeLink} target="_blank" rel="noopener noreferrer">
-                              <Play className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
+              <Link to="/explore" className="inline-block px-5 py-2 bg-accent text-foreground text-xs font-bold rounded">
+                BROWSE OTHER STATE EXPERIENCES
+              </Link>
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
 
-      {/* Cultural Elements A-Z Grid */}
-      {(selectedCategory === 'all' || !['dance', 'deities'].includes(selectedCategory)) && (
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mb-12"
-            >
-              <h2 className="font-heading text-3xl lg:text-4xl text-primary mb-4">
-                Cultural Heritage A-Z
-              </h2>
-              <p className="font-paragraph text-lg text-primary/70">
-                Discover the diverse cultural elements that define {state.stateName}
-              </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {getFilteredElements().map((element, index) => (
-                <motion.div
-                  key={element._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="overflow-hidden bg-background border-secondary hover:shadow-lg transition-all duration-300 h-full">
-                    <div className="relative h-48">
-                      <Image
-                        src={element.elementImage || "https://static.wixstatic.com/media/4faed4_98a424b7d950446c9c9b5128ff6bead9~mv2.png?originWidth=384&originHeight=448"}
-                        alt={element.elementName || 'Cultural Element'}
-                        className="w-full h-full object-cover"
-                        width={400}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <h3 className="font-heading text-lg text-white">
-                          {element.elementName}
-                        </h3>
-                      </div>
-                      {element.elementType && (
-                        <div className="absolute top-3 left-3">
-                          <span className="bg-primary/80 text-primary-foreground px-2 py-1 rounded-full text-xs font-paragraph capitalize">
-                            {element.elementType}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="p-6 space-y-4">
-                      <p className="font-paragraph text-sm text-primary/70">
-                        {element.shortDescription}
-                      </p>
-
-                      <Accordion type="single" collapsible>
-                        <AccordionItem value="details" className="border-secondary">
-                          <AccordionTrigger className="font-heading text-primary hover:text-primary/80">
-                            <div className="flex items-center space-x-2">
-                              <BookOpen className="w-4 h-4" />
-                              <span>Detailed Information</span>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <p className="font-paragraph text-sm text-primary/70">
-                              {element.detailedDescription}
-                            </p>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => speakText(
-                            `${element.elementName}. ${element.shortDescription} ${element.detailedDescription}`, 
-                            `element-${element._id}`
-                          )}
-                          className="border-primary text-primary hover:bg-primary/10"
-                        >
-                          <Volume2 className={`w-4 h-4 mr-1 ${speakingElement === `element-${element._id}` ? 'animate-pulse' : ''}`} />
-                          {speakingElement === `element-${element._id}` ? 'Stop' : 'Listen'}
-                        </Button>
-                        {element.youtubeLink && (
-                          <Button variant="outline" size="sm" asChild className="border-primary text-primary hover:bg-primary/10">
-                            <a href={element.youtubeLink} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4 mr-1" />
-                              Video
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
+        {/* Section: State Knowledge Quiz Challenge */}
+        <div className="bg-foreground text-background p-8 lg:p-12 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2 text-accent font-heading text-xs uppercase tracking-widest">
+              <Award className="w-4 h-4 text-accent" />
+              <span>TEST YOUR KNOWLEDGE</span>
             </div>
+            <h3 className="font-heading text-3xl sm:text-4xl text-background">
+              READY FOR A {stateData.name.toUpperCase()} CULTURAL QUIZ?
+            </h3>
+            <p className="font-paragraph text-xs sm:text-sm text-background/80 max-w-xl">
+              Earn your "{stateQuiz.badgeAwarded}" badge by answering questions about classical dance, heritage, and history!
+            </p>
           </div>
-        </section>
-      )}
+          <Link
+            to={`/quiz/${stateQuiz.id}`}
+            className="px-8 py-4 bg-accent hover:bg-accent-hover text-foreground font-paragraph text-xs font-bold tracking-wider rounded-lg shrink-0"
+          >
+            START QUIZ NOW
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

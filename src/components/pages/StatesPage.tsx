@@ -1,267 +1,167 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { BaseCrudService } from '@/integrations';
-import { States } from '@/entities/states';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Image } from '@/components/ui/image';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { motion } from 'framer-motion';
-import { MapPin, Play, Star, ArrowRight } from 'lucide-react';
+import { SafeImage } from '@/components/ui/SafeImage';
+import { INDIAN_STATES, IndianState } from '@/lib/sanskritiData';
+import { Search, MapPin, ArrowRight, Sparkles, X } from 'lucide-react';
 
 export default function StatesPage() {
-  const [states, setStates] = useState<States[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState<string>('All');
 
-  useEffect(() => {
-    const fetchStates = async () => {
-      try {
-        const { items } = await BaseCrudService.getAll<States>('states');
-        // Sort states with Andhra Pradesh first
-        const sortedStates = items.sort((a, b) => {
-          if (a.stateName === 'Andhra Pradesh') return -1;
-          if (b.stateName === 'Andhra Pradesh') return 1;
-          return (a.stateName || '').localeCompare(b.stateName || '');
-        });
-        setStates(sortedStates);
-      } catch (error) {
-        console.error('Error fetching states:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const regions = ['All', 'North', 'South', 'East', 'West', 'Central', 'North East', 'UT'];
 
-    fetchStates();
-  }, []);
+  const filteredStates = useMemo(() => {
+    return INDIAN_STATES.filter((st) => {
+      const matchesSearch = st.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            st.capital.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            st.danceForms.some(d => d.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesRegion = selectedRegion === 'All' || st.region === selectedRegion;
+      return matchesSearch && matchesRegion;
+    });
+  }, [searchQuery, selectedRegion]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  const featuredState = INDIAN_STATES.find(s => s.key === 'andhra-pradesh') || INDIAN_STATES[0];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative py-24 bg-gradient-to-br from-secondary/30 to-background">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center space-y-6"
-          >
-            <h1 className="font-heading text-5xl lg:text-6xl text-primary">
-              Explore India's States
-            </h1>
-            <p className="font-paragraph text-xl text-primary/70 max-w-3xl mx-auto">
-              Discover the unique cultural heritage of each state. Start your journey 
-              with Andhra Pradesh and explore the magnificent traditions that define India.
-            </p>
-          </motion.div>
+    <div className="bg-background text-foreground font-paragraph min-h-screen py-16">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 space-y-16">
+        {/* Page Header */}
+        <div className="space-y-4 max-w-3xl">
+          <span className="font-heading text-xs text-accent-dark tracking-widest uppercase">EXPLORE ALL 28 STATES & UNION TERRITORIES</span>
+          <h1 className="font-heading text-5xl sm:text-6xl text-foreground">EXPLORE INDIA'S CULTURAL MAP</h1>
+          <p className="font-paragraph text-muted text-base">
+            Every state of India carries centuries of distinct classical art, temple traditions, regional cuisines, and living local heritage.
+          </p>
         </div>
-      </section>
 
-      {/* Featured State - Andhra Pradesh */}
-      {states.length > 0 && states[0].stateName === 'Andhra Pradesh' && (
-        <section className="py-16 bg-primary/5">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="mb-8"
-            >
-              <div className="flex items-center space-x-2 mb-4">
-                <Star className="w-6 h-6 text-primary" />
-                <span className="font-paragraph text-lg text-primary font-semibold">
-                  Featured State
-                </span>
+        {/* Featured State Spotlight - Andhra Pradesh */}
+        <div className="bg-surface border border-secondary rounded-2xl overflow-hidden shadow-sm grid lg:grid-cols-12">
+          <div className="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 bg-accent/20 text-accent-dark rounded-full text-xs font-bold uppercase">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>RECOMMENDED STARTING POINT</span>
               </div>
-              <h2 className="font-heading text-3xl lg:text-4xl text-primary">
-                Start with Andhra Pradesh
-              </h2>
-            </motion.div>
+              <h2 className="font-heading text-4xl sm:text-5xl text-foreground">{featuredState.name.toUpperCase()}</h2>
+              <p className="font-paragraph text-sm text-muted leading-relaxed">{featuredState.description}</p>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <Card className="overflow-hidden bg-background border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="grid lg:grid-cols-2 gap-0">
-                  <div className="relative h-64 lg:h-auto">
-                    <Image
-                      src={states[0].stateImage || "https://static.wixstatic.com/media/4faed4_b1370c7b76e141fc82c5a9d6160e5d35~mv2.png?originWidth=576&originHeight=384"}
-                      alt="Andhra Pradesh"
-                      className="w-full h-full object-cover"
-                      width={600}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-paragraph">
-                        Recommended Start
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-8 lg:p-12 flex flex-col justify-center">
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="font-heading text-2xl lg:text-3xl text-primary mb-3">
-                          Andhra Pradesh
-                        </h3>
-                        <p className="font-paragraph text-primary/70 leading-relaxed">
-                          {states[0].description || "Discover the birthplace of Kuchipudi dance, the spiritual grandeur of Tirupati, and the rich cultural traditions that have flourished for centuries in this magnificent state."}
-                        </p>
-                      </div>
+              <div className="flex flex-wrap gap-2 pt-2">
+                {featuredState.danceForms.slice(0, 3).map(d => (
+                  <span key={d} className="px-3 py-1 bg-background border border-secondary rounded-full text-xs text-foreground font-medium">
+                    {d}
+                  </span>
+                ))}
+                {featuredState.cuisines.slice(0, 2).map(c => (
+                  <span key={c} className="px-3 py-1 bg-background border border-secondary rounded-full text-xs text-foreground font-medium">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-                      <div className="flex flex-wrap gap-3">
-                        <span className="bg-secondary/50 text-primary px-3 py-1 rounded-full text-sm font-paragraph">
-                          Kuchipudi Dance
-                        </span>
-                        <span className="bg-secondary/50 text-primary px-3 py-1 rounded-full text-sm font-paragraph">
-                          Tirupati Temple
-                        </span>
-                        <span className="bg-secondary/50 text-primary px-3 py-1 rounded-full text-sm font-paragraph">
-                          Godavari Cuisine
-                        </span>
-                      </div>
+            <div className="pt-4">
+              <Link
+                to={`/state/${featuredState.key}`}
+                className="inline-flex items-center px-6 py-3.5 bg-foreground hover:bg-foreground/90 text-background font-paragraph text-xs font-bold tracking-wider rounded-lg transition-all"
+              >
+                <span>EXPLORE {featuredState.name.toUpperCase()} CULTURE</span>
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </div>
+          </div>
 
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
-                          <Link to={`/state/${states[0].stateKey || 'andhra-pradesh'}`}>
-                            Explore Culture
-                            <ArrowRight className="w-4 h-4 ml-2" />
-                          </Link>
-                        </Button>
-                        {states[0].youtubeLink && (
-                          <Button variant="outline" asChild className="border-primary text-primary hover:bg-primary/10">
-                            <a href={states[0].youtubeLink} target="_blank" rel="noopener noreferrer">
-                              <Play className="w-4 h-4 mr-2" />
-                              Watch Video
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+          <div className="lg:col-span-5 min-h-[350px] relative">
+            <SafeImage src={featuredState.image} alt={featuredState.name} className="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        {/* Filter & Search Controls */}
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Region Tabs */}
+            <div className="flex overflow-x-auto pb-2 gap-2 justify-start no-scrollbar">
+              {regions.map(r => (
+                <button
+                  key={r}
+                  onClick={() => setSelectedRegion(r)}
+                  className={`px-4 py-2 rounded-lg font-heading text-base tracking-wider transition-all border shrink-0 ${
+                    selectedRegion === r
+                      ? 'bg-accent border-accent text-foreground font-bold shadow-sm'
+                      : 'bg-surface border-secondary text-muted hover:border-foreground'
+                  }`}
+                >
+                  {r.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search state or dance..."
+                className="w-full pl-10 pr-4 py-2 bg-surface border border-secondary rounded-lg font-paragraph text-xs text-foreground focus:outline-none focus:border-accent"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between border-b border-secondary pb-3">
+            <span className="font-paragraph text-xs font-bold text-muted uppercase tracking-wider">
+              SHOWING {filteredStates.length} STATES & TERRITORIES
+            </span>
+          </div>
+
+          {/* All 28 States & UTs Grid */}
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredStates.map((st) => (
+              <Link
+                key={st.key}
+                to={`/state/${st.key}`}
+                className="group bg-surface border border-secondary rounded-xl overflow-hidden hover:border-foreground shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+              >
+                <div className="relative h-44 overflow-hidden">
+                  <SafeImage
+                    src={st.image}
+                    alt={st.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-foreground/80 backdrop-blur-sm text-background px-2.5 py-0.5 rounded text-[10px] font-bold uppercase">
+                    {st.region}
                   </div>
                 </div>
-              </Card>
-            </motion.div>
-          </div>
-        </section>
-      )}
 
-      {/* All States Grid */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mb-12"
-          >
-            <h2 className="font-heading text-3xl lg:text-4xl text-primary mb-4">
-              All States & Union Territories
-            </h2>
-            <p className="font-paragraph text-lg text-primary/70">
-              Choose any state to explore its unique cultural heritage
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {states.map((state, index) => (
-              <motion.div
-                key={state._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                onHoverStart={() => setSelectedState(state._id)}
-                onHoverEnd={() => setSelectedState(null)}
-              >
-                <Card className={`overflow-hidden bg-background border-secondary hover:border-primary/50 transition-all duration-300 h-full ${
-                  selectedState === state._id ? 'shadow-lg scale-105' : 'hover:shadow-md'
-                }`}>
-                  <div className="relative h-48">
-                    <Image
-                      src={state.stateImage || "https://static.wixstatic.com/media/4faed4_076e74d8c83642d5964a5d29b02c3d0b~mv2.png?originWidth=384&originHeight=320"}
-                      alt={state.stateName || 'State'}
-                      className="w-full h-full object-cover"
-                      width={400}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <h3 className="font-heading text-lg text-white">
-                        {state.stateName}
-                      </h3>
-                    </div>
-                    {state.highlighted && (
-                      <div className="absolute top-3 right-3">
-                        <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-4 space-y-4">
-                    <p className="font-paragraph text-sm text-primary/70 line-clamp-2">
-                      {state.description || "Explore the rich cultural heritage and traditions of this beautiful state."}
+                <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                  <div className="space-y-1.5">
+                    <h3 className="font-heading text-2xl text-foreground group-hover:text-accent-dark transition-colors">
+                      {st.name}
+                    </h3>
+                    <p className="text-xs text-muted flex items-center">
+                      <MapPin className="w-3 h-3 text-accent-dark mr-1" />
+                      Capital: {st.capital}
                     </p>
-                    
-                    <div className="flex gap-2">
-                      <Button asChild size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
-                        <Link to={`/state/${state.stateKey || state.stateName?.toLowerCase().replace(/\s+/g, '-')}`}>
-                          <MapPin className="w-4 h-4 mr-1" />
-                          Explore
-                        </Link>
-                      </Button>
-                      {state.youtubeLink && (
-                        <Button variant="outline" size="sm" asChild className="border-primary text-primary hover:bg-primary/10">
-                          <a href={state.youtubeLink} target="_blank" rel="noopener noreferrer">
-                            <Play className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
-                    </div>
+                    <p className="text-xs text-muted line-clamp-2 mt-1 leading-relaxed">
+                      {st.description}
+                    </p>
                   </div>
-                </Card>
-              </motion.div>
+
+                  <div className="pt-3 border-t border-secondary flex items-center justify-between text-xs font-bold text-foreground">
+                    <span>EXPLORE CULTURE</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Interactive Map Section */}
-      <section className="py-16 bg-secondary/20">
-        <div className="max-w-4xl mx-auto text-center px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="space-y-6"
-          >
-            <h2 className="font-heading text-3xl lg:text-4xl text-primary">
-              Interactive Cultural Map
-            </h2>
-            <p className="font-paragraph text-lg text-primary/70">
-              Coming soon: Navigate through India with our interactive SVG map, 
-              highlighting cultural hotspots and regional specialties.
-            </p>
-            <div className="bg-background/50 rounded-lg p-12 border border-secondary">
-              <div className="w-32 h-32 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                <MapPin className="w-16 h-16 text-primary/50" />
-              </div>
-              <p className="font-paragraph text-primary/60 mt-4">
-                Interactive map feature in development
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }

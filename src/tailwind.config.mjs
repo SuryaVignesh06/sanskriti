@@ -19,16 +19,29 @@ export default {
                 '9xl': ['8rem', { lineHeight: '1', letterSpacing: '-0.035em', fontWeight: '900' }],
             },
             fontFamily: {
-                heading: "fraunces",
-                paragraph: "open sans"
+                heading: ['"Bebas Neue"', 'sans-serif'],
+                paragraph: ['"Poppins"', 'sans-serif']
             },
             colors: {
-                foreground: '#4A3B1B',
-                background: '#E6D6B8',
-                secondary: '#D6C3A1',
-                'secondary-foreground': '#4A3B1B',
-                'primary-foreground': '#E6D6B8',
-                primary: '#4A3B1B'
+                background: '#FFFFFF',
+                surface: '#F7F7F4',
+                foreground: '#151515',
+                primary: '#151515',
+                'primary-foreground': '#FFFFFF',
+                secondary: '#E8E8E8',
+                'secondary-foreground': '#151515',
+                accent: {
+                    DEFAULT: '#F4C430',
+                    hover: '#E5B320',
+                    light: '#FFF9E6',
+                    dark: '#D4A017'
+                },
+                muted: {
+                    DEFAULT: '#6F6F6F',
+                    light: '#9E9E9E',
+                    dark: '#424242'
+                },
+                border: '#E8E8E8'
             },
         },
     },
@@ -37,3 +50,4 @@ export default {
     },
     plugins: [require('@tailwindcss/container-queries'), require('@tailwindcss/typography')],
 }
+

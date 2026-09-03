@@ -1,17 +1,25 @@
 import { MemberProvider } from '@/integrations';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import { ScrollToTop } from '@/lib/scroll-to-top';
 import { MemberProtectedRoute } from '@/components/ui/member-protected-route';
 
 // Import pages
 import Layout from '@/components/Layout';
 import HomePage from '@/components/pages/HomePage';
-import LoginPage from '@/components/pages/LoginPage';
+import ExplorePage from '@/components/pages/ExplorePage';
+import ExperienceDetailPage from '@/components/pages/ExperienceDetailPage';
 import StatesPage from '@/components/pages/StatesPage';
 import StateCulturePage from '@/components/pages/StateCulturePage';
-import DanceDetailsPage from '@/components/pages/DanceDetailsPage';
+import FestivalsPage from '@/components/pages/FestivalsPage';
+import FestivalDetailPage from '@/components/pages/FestivalDetailPage';
+import LearnOnlinePage from '@/components/pages/LearnOnlinePage';
+import QuizzesPage from '@/components/pages/QuizzesPage';
+import QuizDetailPage from '@/components/pages/QuizDetailPage';
+import AmbassadorProfilePage from '@/components/pages/AmbassadorProfilePage';
+import BecomeAmbassadorPage from '@/components/pages/BecomeAmbassadorPage';
+import StoriesPage from '@/components/pages/StoriesPage';
 import ProfilePage from '@/components/pages/ProfilePage';
 import AboutPage from '@/components/pages/AboutPage';
+import LoginPage from '@/components/pages/LoginPage';
 
 const router = createBrowserRouter([
   {
@@ -20,40 +28,60 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />, // MIXED ROUTE: Shows different content for authenticated vs anonymous users
+        element: <HomePage />,
       },
       {
-        path: "login",
-        element: <LoginPage />,
+        path: "explore",
+        element: <ExplorePage />,
+      },
+      {
+        path: "experience/:id",
+        element: <ExperienceDetailPage />,
       },
       {
         path: "states",
-        element: (
-          <MemberProtectedRoute messageToSignIn="Sign in to explore India's cultural heritage">
-            <StatesPage />
-          </MemberProtectedRoute>
-        ),
+        element: <StatesPage />,
       },
       {
         path: "state/:stateKey",
-        element: (
-          <MemberProtectedRoute messageToSignIn="Sign in to explore state culture">
-            <StateCulturePage />
-          </MemberProtectedRoute>
-        ),
+        element: <StateCulturePage />,
       },
       {
-        path: "dance/:danceId",
-        element: (
-          <MemberProtectedRoute messageToSignIn="Sign in to explore dance details">
-            <DanceDetailsPage />
-          </MemberProtectedRoute>
-        ),
+        path: "festivals",
+        element: <FestivalsPage />,
+      },
+      {
+        path: "festival/:id",
+        element: <FestivalDetailPage />,
+      },
+      {
+        path: "learn-online",
+        element: <LearnOnlinePage />,
+      },
+      {
+        path: "quizzes",
+        element: <QuizzesPage />,
+      },
+      {
+        path: "quiz/:quizId",
+        element: <QuizDetailPage />,
+      },
+      {
+        path: "ambassador/:id",
+        element: <AmbassadorProfilePage />,
+      },
+      {
+        path: "become-ambassador",
+        element: <BecomeAmbassadorPage />,
+      },
+      {
+        path: "stories",
+        element: <StoriesPage />,
       },
       {
         path: "profile",
         element: (
-          <MemberProtectedRoute messageToSignIn="Sign in to access your profile">
+          <MemberProtectedRoute messageToSignIn="Sign in to access your profile dashboard and quiz badges">
             <ProfilePage />
           </MemberProtectedRoute>
         ),
@@ -63,19 +91,22 @@ const router = createBrowserRouter([
         element: <AboutPage />,
       },
       {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
         path: "*",
         element: <Navigate to="/" replace />,
       },
     ],
   },
 ], {
-  basename: import.meta.env.BASE_NAME,
+  basename: (import.meta as any).env?.BASE_NAME || '/',
 });
 
 export default function AppRouter() {
   return (
     <MemberProvider>
-      <ScrollToTop />
       <RouterProvider router={router} />
     </MemberProvider>
   );
