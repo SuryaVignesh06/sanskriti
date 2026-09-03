@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
+import cloudflare from "@astrojs/cloudflare";
 import wix from "@wix/astro";
 import monitoring from "@wix/monitoring-astro";
 import react from "@astrojs/react";
@@ -9,16 +10,7 @@ import dynamicDataPlugin from "@wix/babel-plugin-jsx-dynamic-data";
 import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
 import postcssPseudoToData from "@wix/postcss-pseudo-to-data";
 
-const isBuild = process.env.NODE_ENV == "production";
-
-let cloudProviderFetchAdapter;
-if (isBuild) {
-  try {
-    cloudProviderFetchAdapter = (await import("@wix/cloud-provider-fetch-adapter")).default;
-  } catch (e) {
-    // Ignore in dev if workerd native binary is not installed
-  }
-}
+const isBuild = process.env.NODE_ENV === "production";
 
 
 // https://astro.build/config
@@ -40,6 +32,7 @@ export default defineConfig({
       },
     },
     tailwind(),
+    wix(),
     ...(isBuild ? [monitoring()] : []),
     react(isBuild ? {} : {
       babel: { plugins: [sourceAttrsPlugin, dynamicDataPlugin] },
@@ -71,7 +64,6 @@ export default defineConfig({
       },
     } : undefined,
   },
-  ...(isBuild && { adapter: cloudProviderFetchAdapter({}) }),
   devToolbar: {
     enabled: false,
   },
