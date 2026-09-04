@@ -5,7 +5,7 @@
   "homepage": "https://SuryaVignesh06.github.io/sanskriti",
   "scripts": {
     "dev": "concurrently \"vite\" \"node server/index.js\"",
-    "build": "tsc && vite build --base=/sanskriti/",
+    "build": "tsc && vite build --base=/sanskriti/ && node -e \"require('fs').copyFileSync('dist/index.html', 'dist/404.html')\"",
     "preview": "vite preview",
     "server": "node server/index.js",
     "predeploy": "npm run build",
