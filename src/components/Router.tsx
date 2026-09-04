@@ -1,5 +1,5 @@
 import { MemberProvider } from '@/integrations';
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { createHashRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { MemberProtectedRoute } from '@/components/ui/member-protected-route';
 
 // Import pages
@@ -29,7 +29,7 @@ import DestinationDetailPage from '@/components/pages/DestinationDetailPage';
 import GuideProfilePage from '@/components/pages/GuideProfilePage';
 import MyIndiaPage from '@/components/pages/MyIndiaPage';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,
@@ -140,9 +140,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-], {
-  basename: import.meta.env.BASE_URL,
-});
+]);
 
 export default function AppRouter() {
   return (
