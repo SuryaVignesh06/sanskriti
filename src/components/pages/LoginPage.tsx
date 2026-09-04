@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <div className="bg-background text-foreground font-paragraph min-h-screen py-24 flex items-center justify-center">
       <div className="max-w-md w-full mx-auto px-6 space-y-8 text-center">
-        <div className="w-16 h-16 bg-accent text-foreground rounded-2xl flex items-center justify-center font-heading text-3xl font-bold mx-auto shadow-md">
+        <div className="w-16 h-16 bg-accent text-foreground rounded-[28px] flex items-center justify-center font-heading text-3xl font-bold mx-auto shadow-md">
           S
         </div>
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="p-8 bg-surface border border-secondary rounded-2xl space-y-6 shadow-sm">
+        <div className="p-8 bg-surface border border-secondary rounded-[28px] space-y-6 shadow-sm">
           <div className="space-y-3 text-left text-xs font-paragraph text-muted">
             <div className="flex items-center space-x-2">
               <ShieldCheck className="w-4 h-4 text-accent-dark shrink-0" />

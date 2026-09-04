@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { CULTURAL_QUIZZES } from '@/lib/sanskritiData';
+import { CULTURAL_QUIZZES, getQuizForState } from '@/lib/sanskritiData';
 import { Award, ArrowLeft, ArrowRight, CheckCircle2, XCircle, RotateCcw, Sparkles } from 'lucide-react';
+
+import { addKarmaPoints } from '@/lib/karmaSystem';
 
 export default function QuizDetailPage() {
   const { quizId } = useParams<{ quizId: string }>();
-  const quiz = CULTURAL_QUIZZES.find(q => q.id === quizId) || CULTURAL_QUIZZES[0];
+
+  const quiz = (() => {
+    if (!quizId) return CULTURAL_QUIZZES[0];
+    const staticQuiz = CULTURAL_QUIZZES.find(q => q.id === quizId);
+    if (staticQuiz) return staticQuiz;
+    const cleanKey = quizId.replace(/^quiz-/, '');
+    return getQuizForState(cleanKey);
+  })();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
@@ -35,6 +44,7 @@ export default function QuizDetailPage() {
       setIsAnswerSubmitted(false);
     } else {
       setQuizCompleted(true);
+      addKarmaPoints(50, `Completed ${quiz.title}`);
     }
   };
 
@@ -102,7 +112,7 @@ export default function QuizDetailPage() {
                     key={idx}
                     onClick={() => handleSelectOption(idx)}
                     disabled={isAnswerSubmitted}
-                    className={`w-full p-4 rounded-xl border font-paragraph text-sm text-left transition-all flex items-center justify-between ${btnStyle}`}
+                    className={`w-full p-4 rounded-[20px] border font-paragraph text-sm text-left transition-all flex items-center justify-between ${btnStyle}`}
                   >
                     <span>{optionText}</span>
                     {isAnswerSubmitted && idx === currentQuestion.correctAnswerIndex && (
@@ -118,7 +128,7 @@ export default function QuizDetailPage() {
 
             {/* Explanation Banner */}
             {isAnswerSubmitted && (
-              <div className="p-4 bg-surface border border-secondary rounded-xl space-y-2 animate-in fade-in">
+              <div className="p-4 bg-surface border border-secondary rounded-[20px] space-y-2 animate-in fade-in">
                 <h5 className="font-heading text-sm text-foreground">CULTURAL EXPLANATION:</h5>
                 <p className="font-paragraph text-xs text-muted leading-relaxed">
                   {currentQuestion.explanation}
@@ -139,7 +149,7 @@ export default function QuizDetailPage() {
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  className="px-8 py-3.5 bg-foreground hover:bg-foreground/90 text-background font-paragraph text-xs font-bold tracking-wider rounded-lg transition-all flex items-center"
+                  className="px-8 py-3.5 bg-accent hover:bg-accent-hover text-foreground shadow-sm font-paragraph text-xs font-bold tracking-wider rounded-lg transition-all flex items-center"
                 >
                   <span>{currentQuestionIndex + 1 < quiz.questions.length ? 'NEXT QUESTION' : 'VIEW FINAL RESULTS'}</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -149,7 +159,7 @@ export default function QuizDetailPage() {
           </div>
         ) : (
           /* Quiz Results View */
-          <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-2xl text-center space-y-6">
+          <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-[28px] text-center space-y-6">
             <div className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center border-2 ${
               isPassed ? 'bg-accent/20 border-accent text-accent-dark' : 'bg-secondary/50 border-secondary text-muted'
             }`}>
@@ -167,7 +177,7 @@ export default function QuizDetailPage() {
             </div>
 
             {isPassed ? (
-              <div className="p-6 bg-background border border-accent/40 rounded-xl space-y-3 max-w-md mx-auto">
+              <div className="p-6 bg-background border border-accent/40 rounded-[20px] space-y-3 max-w-md mx-auto">
                 <div className="flex items-center justify-center space-x-2 text-accent-dark">
                   <Sparkles className="w-5 h-5 text-accent-dark" />
                   <span className="font-heading text-base">VERIFIED BADGE UNLOCKED!</span>

@@ -20,7 +20,7 @@ export default function StoriesPage() {
         </div>
 
         {/* Lead Featured Story */}
-        <div className="bg-surface border border-secondary rounded-2xl overflow-hidden shadow-sm grid lg:grid-cols-12">
+        <div className="bg-surface border border-secondary rounded-[28px] overflow-hidden shadow-sm grid lg:grid-cols-12">
           <div className="lg:col-span-7 min-h-[380px]">
             <SafeImage src={featuredStory.image} alt={featuredStory.title} className="w-full h-full object-cover" />
           </div>
@@ -47,7 +47,7 @@ export default function StoriesPage() {
         {/* Secondary Story Grid */}
         <div className="grid md:grid-cols-2 gap-8">
           {otherStories.map((story) => (
-            <div key={story.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm p-6 space-y-4 flex flex-col justify-between">
+            <div key={story.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm p-6 space-y-4 flex flex-col justify-between">
               <div className="h-60 rounded-lg overflow-hidden">
                 <SafeImage src={story.image} alt={story.title} className="w-full h-full object-cover" />
               </div>

@@ -32,7 +32,7 @@ export default function BecomeAmbassadorPage() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-surface border border-secondary p-8 rounded-xl space-y-4 relative">
+            <div className="bg-surface border border-secondary p-8 rounded-[20px] space-y-4 relative">
               <span className="font-heading text-6xl text-accent-dark opacity-30 block">01</span>
               <h3 className="font-heading text-2xl text-foreground">APPLY ONLINE</h3>
               <p className="font-paragraph text-xs text-muted leading-relaxed">
@@ -40,7 +40,7 @@ export default function BecomeAmbassadorPage() {
               </p>
             </div>
 
-            <div className="bg-surface border border-secondary p-8 rounded-xl space-y-4 relative">
+            <div className="bg-surface border border-secondary p-8 rounded-[20px] space-y-4 relative">
               <span className="font-heading text-6xl text-accent-dark opacity-30 block">02</span>
               <h3 className="font-heading text-2xl text-foreground">GET VERIFIED</h3>
               <p className="font-paragraph text-xs text-muted leading-relaxed">
@@ -48,7 +48,7 @@ export default function BecomeAmbassadorPage() {
               </p>
             </div>
 
-            <div className="bg-surface border border-secondary p-8 rounded-xl space-y-4 relative">
+            <div className="bg-surface border border-secondary p-8 rounded-[20px] space-y-4 relative">
               <span className="font-heading text-6xl text-accent-dark opacity-30 block">03</span>
               <h3 className="font-heading text-2xl text-foreground">CREATE EXPERIENCE</h3>
               <p className="font-paragraph text-xs text-muted leading-relaxed">
@@ -56,7 +56,7 @@ export default function BecomeAmbassadorPage() {
               </p>
             </div>
 
-            <div className="bg-surface border border-secondary p-8 rounded-xl space-y-4 relative">
+            <div className="bg-surface border border-secondary p-8 rounded-[20px] space-y-4 relative">
               <span className="font-heading text-6xl text-accent-dark opacity-30 block">04</span>
               <h3 className="font-heading text-2xl text-foreground">WELCOME TRAVELERS</h3>
               <p className="font-paragraph text-xs text-muted leading-relaxed">
@@ -67,7 +67,7 @@ export default function BecomeAmbassadorPage() {
         </div>
 
         {/* Application Form */}
-        <div className="max-w-2xl mx-auto bg-surface border border-secondary p-8 lg:p-12 rounded-2xl shadow-sm space-y-6">
+        <div className="max-w-2xl mx-auto bg-surface border border-secondary p-8 lg:p-12 rounded-[28px] shadow-sm space-y-6">
           {!submitted ? (
             <form onSubmit={handleSubmit} className="space-y-6 font-paragraph">
               <div className="space-y-2 text-center border-b border-secondary pb-4">

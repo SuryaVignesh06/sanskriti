@@ -26,7 +26,7 @@ export default function AmbassadorProfilePage() {
 
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-12 space-y-16">
         {/* Ambassador Profile Hero Card */}
-        <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-2xl grid md:grid-cols-12 gap-8 items-center">
+        <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-[28px] grid md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-4 flex justify-center">
             <div className="relative">
               <SafeImage
@@ -87,7 +87,7 @@ export default function AmbassadorProfilePage() {
           {hostedExperiences.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hostedExperiences.map((exp) => (
-                <div key={exp.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm flex flex-col justify-between">
+                <div key={exp.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm flex flex-col justify-between">
                   <div className="h-52 relative">
                     <SafeImage src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
@@ -103,7 +103,7 @@ export default function AmbassadorProfilePage() {
                       <span className="font-heading text-lg text-foreground">₹{exp.priceINR}</span>
                       <Link
                         to={`/experience/${exp.id}`}
-                        className="px-4 py-2 bg-foreground text-background font-paragraph text-xs font-bold rounded"
+                        className="px-4 py-2 bg-accent text-foreground font-paragraph text-xs font-bold rounded"
                       >
                         VIEW DETAILS
                       </Link>
@@ -113,7 +113,7 @@ export default function AmbassadorProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-2">
+            <div className="p-8 bg-surface border border-secondary rounded-[20px] text-center space-y-2">
               <p className="text-xs text-muted">Upcoming physical experiences are currently being scheduled for this Ambassador.</p>
             </div>
           )}

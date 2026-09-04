@@ -9,6 +9,10 @@ import ExplorePage from '@/components/pages/ExplorePage';
 import ExperienceDetailPage from '@/components/pages/ExperienceDetailPage';
 import StatesPage from '@/components/pages/StatesPage';
 import StateCulturePage from '@/components/pages/StateCulturePage';
+import InteractiveMapPage from '@/components/pages/InteractiveMapPage';
+import RegionPage from '@/components/pages/RegionPage';
+import FoodDiscoveryPage from '@/components/pages/FoodDiscoveryPage';
+import CommunityPage from '@/components/pages/CommunityPage';
 import FestivalsPage from '@/components/pages/FestivalsPage';
 import FestivalDetailPage from '@/components/pages/FestivalDetailPage';
 import LearnOnlinePage from '@/components/pages/LearnOnlinePage';
@@ -20,6 +24,10 @@ import StoriesPage from '@/components/pages/StoriesPage';
 import ProfilePage from '@/components/pages/ProfilePage';
 import AboutPage from '@/components/pages/AboutPage';
 import LoginPage from '@/components/pages/LoginPage';
+
+import DestinationDetailPage from '@/components/pages/DestinationDetailPage';
+import GuideProfilePage from '@/components/pages/GuideProfilePage';
+import MyIndiaPage from '@/components/pages/MyIndiaPage';
 
 const router = createBrowserRouter([
   {
@@ -43,8 +51,40 @@ const router = createBrowserRouter([
         element: <StatesPage />,
       },
       {
+        path: "explore-india",
+        element: <InteractiveMapPage />,
+      },
+      {
+        path: "map",
+        element: <InteractiveMapPage />,
+      },
+      {
         path: "state/:stateKey",
         element: <StateCulturePage />,
+      },
+      {
+        path: "region/:slug",
+        element: <RegionPage />,
+      },
+      {
+        path: "destinations/:slug",
+        element: <DestinationDetailPage />,
+      },
+      {
+        path: "guides/:slug",
+        element: <GuideProfilePage />,
+      },
+      {
+        path: "my-india",
+        element: <MyIndiaPage />,
+      },
+      {
+        path: "food",
+        element: <FoodDiscoveryPage />,
+      },
+      {
+        path: "community",
+        element: <CommunityPage />,
       },
       {
         path: "festivals",
@@ -101,7 +141,7 @@ const router = createBrowserRouter([
     ],
   },
 ], {
-  basename: (import.meta as any).env?.BASE_NAME || '/',
+  basename: '/sanskriti/',
 });
 
 export default function AppRouter() {

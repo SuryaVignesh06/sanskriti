@@ -44,13 +44,13 @@ export default function LearnOnlinePage() {
         {/* Live Classes Catalog */}
         <div className="grid md:grid-cols-3 gap-8">
           {filteredClasses.map((cls) => (
-            <div key={cls.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div key={cls.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="h-52 relative">
                 <SafeImage src={cls.image} alt={cls.title} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
                   {cls.category}
                 </div>
-                <div className="absolute top-3 right-3 bg-foreground text-background px-2.5 py-0.5 rounded text-[10px] font-bold uppercase flex items-center">
+                <div className="absolute top-3 right-3 bg-accent/20 text-accent-dark px-2.5 py-0.5 rounded text-[10px] font-bold uppercase flex items-center">
                   <Video className="w-3 h-3 mr-1" /> LIVE VIRTUAL
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default function LearnOnlinePage() {
         </div>
 
         {/* Strategic Journey Progression Section */}
-        <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-2xl space-y-8">
+        <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-[28px] space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="font-heading text-xs text-accent-dark tracking-widest uppercase">STRATEGIC PRODUCT LOOP</span>
             <h2 className="font-heading text-4xl sm:text-5xl text-foreground">LEARN TODAY. TRAVEL DEEPER TOMORROW.</h2>
@@ -100,27 +100,27 @@ export default function LearnOnlinePage() {
           </div>
 
           <div className="grid sm:grid-cols-5 gap-4 text-center">
-            <div className="p-4 bg-background border border-secondary rounded-xl space-y-2">
+            <div className="p-4 bg-background border border-secondary rounded-[20px] space-y-2">
               <span className="font-heading text-2xl text-accent-dark">01</span>
               <h4 className="font-heading text-lg text-foreground">DISCOVER</h4>
               <p className="text-[10px] text-muted">Explore living culture online</p>
             </div>
-            <div className="p-4 bg-background border border-secondary rounded-xl space-y-2">
+            <div className="p-4 bg-background border border-secondary rounded-[20px] space-y-2">
               <span className="font-heading text-2xl text-accent-dark">02</span>
               <h4 className="font-heading text-lg text-foreground">LEARN</h4>
               <p className="text-[10px] text-muted">Join live virtual classes</p>
             </div>
-            <div className="p-4 bg-background border border-secondary rounded-xl space-y-2">
+            <div className="p-4 bg-background border border-secondary rounded-[20px] space-y-2">
               <span className="font-heading text-2xl text-accent-dark">03</span>
               <h4 className="font-heading text-lg text-foreground">CONNECT</h4>
               <p className="text-[10px] text-muted">Meet Ambassadors virtually</p>
             </div>
-            <div className="p-4 bg-background border border-secondary rounded-xl space-y-2">
+            <div className="p-4 bg-background border border-secondary rounded-[20px] space-y-2">
               <span className="font-heading text-2xl text-accent-dark">04</span>
               <h4 className="font-heading text-lg text-foreground">TRAVEL</h4>
               <p className="text-[10px] text-muted">Book in-person experiences</p>
             </div>
-            <div className="p-4 bg-background border border-secondary rounded-xl space-y-2">
+            <div className="p-4 bg-background border border-secondary rounded-[20px] space-y-2">
               <span className="font-heading text-2xl text-accent-dark">05</span>
               <h4 className="font-heading text-lg text-foreground">EXPERIENCE</h4>
               <p className="text-[10px] text-muted">Participate in real culture</p>

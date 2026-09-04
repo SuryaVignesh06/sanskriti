@@ -5,9 +5,13 @@ import { SafeImage } from '@/components/ui/SafeImage';
 import { User, Calendar, Bookmark, Video, Award, MessageSquare, Settings, ShieldCheck, MapPin } from 'lucide-react';
 import { CULTURAL_EXPERIENCES, CULTURAL_QUIZZES, ONLINE_CLASSES } from '@/lib/sanskritiData';
 
+import { getKarmaPoints, getUserBadge } from '@/lib/karmaSystem';
+
 export default function ProfilePage() {
   const { member, actions } = useMember();
   const [activeTab, setActiveTab] = useState<'trips' | 'saved' | 'classes' | 'badges' | 'messages' | 'settings'>('trips');
+  const karmaPoints = getKarmaPoints();
+  const karmaBadge = getUserBadge(karmaPoints);
 
   const sampleTrips = [
     {
@@ -22,26 +26,36 @@ export default function ProfilePage() {
 
   const earnedBadges = [
     { name: 'Natyashastra Scholar', date: 'Earned March 2, 2026', category: 'Dance & Art' },
-    { name: 'Festival Explorer', date: 'Earned Feb 24, 2026', category: 'Festivals' }
+    { name: 'Festival Explorer', date: 'Earned Feb 24, 2026', category: 'Festivals' },
+    { name: karmaBadge.name, date: 'Current Rank', category: 'Karma Badge' }
   ];
 
   return (
     <div className="bg-background text-foreground font-paragraph min-h-screen py-16">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 space-y-12">
         {/* Profile User Header */}
-        <div className="bg-surface border border-secondary p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+        <div className="bg-surface border border-secondary p-8 rounded-[28px] flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-accent text-foreground rounded-full flex items-center justify-center font-heading text-2xl font-bold">
               {member?.profile?.nickname ? member.profile.nickname[0].toUpperCase() : 'C'}
             </div>
             <div>
-              <h1 className="font-heading text-3xl text-foreground">
-                {member?.profile?.nickname || member?.contact?.firstName || 'Cultural Explorer'}
-              </h1>
+              <div className="flex items-center space-x-2">
+                <h1 className="font-heading text-3xl text-foreground">
+                  {member?.profile?.nickname || member?.contact?.firstName || 'Cultural Explorer'}
+                </h1>
+                <span className="text-xl">{karmaBadge.icon}</span>
+              </div>
               <p className="text-xs text-muted">Member ID: {(member as any)?.id || 'MEM-2026-X8'}</p>
-              <span className="inline-flex items-center px-2 py-0.5 bg-accent/20 text-accent-dark text-[10px] font-bold rounded mt-1">
-                Verified Cultural Explorer
-              </span>
+
+              <div className="flex items-center space-x-2 mt-2">
+                <span className="inline-flex items-center px-2.5 py-0.5 bg-accent/20 text-accent-dark text-[10px] font-bold rounded">
+                  {karmaBadge.name} ({karmaPoints} Karma)
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 bg-background border border-secondary text-muted text-[10px] font-bold rounded">
+                  12 / 36 States Explored
+                </span>
+              </div>
             </div>
           </div>
 
@@ -123,7 +137,7 @@ export default function ProfilePage() {
           {activeTab === 'trips' && (
             <div className="space-y-4">
               {sampleTrips.map((trip) => (
-                <div key={trip.id} className="bg-surface border border-secondary rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div key={trip.id} className="bg-surface border border-secondary rounded-[20px] p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                   <div className="flex items-center space-x-4">
                     <SafeImage src={trip.experience.image} alt={trip.experience.title} className="w-24 h-20 rounded-lg object-cover" />
                     <div>
@@ -137,7 +151,7 @@ export default function ProfilePage() {
                   </div>
                   <Link
                     to={`/experience/${trip.experience.id}`}
-                    className="px-5 py-2.5 bg-foreground text-background text-xs font-bold rounded-lg shrink-0"
+                    className="px-5 py-2.5 bg-accent text-foreground text-xs font-bold rounded-lg shrink-0"
                   >
                     VIEW EXPERIENCE DETAILS
                   </Link>
@@ -149,7 +163,7 @@ export default function ProfilePage() {
           {activeTab === 'badges' && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {earnedBadges.map((badge, idx) => (
-                <div key={idx} className="bg-surface border border-secondary rounded-xl p-6 text-center space-y-3">
+                <div key={idx} className="bg-surface border border-secondary rounded-[20px] p-6 text-center space-y-3">
                   <div className="w-16 h-16 bg-accent/20 text-accent-dark rounded-full flex items-center justify-center mx-auto">
                     <Award className="w-8 h-8" />
                   </div>
@@ -161,7 +175,7 @@ export default function ProfilePage() {
           )}
 
           {activeTab === 'saved' && (
-            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+            <div className="p-8 bg-surface border border-secondary rounded-[20px] text-center space-y-3">
               <p className="text-xs text-muted">No saved experiences yet. Browse experiences and click save to keep them here.</p>
               <Link to="/explore" className="inline-block px-5 py-2.5 bg-accent text-foreground text-xs font-bold rounded">
                 EXPLORE EXPERIENCES
@@ -170,7 +184,7 @@ export default function ProfilePage() {
           )}
 
           {activeTab === 'classes' && (
-            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+            <div className="p-8 bg-surface border border-secondary rounded-[20px] text-center space-y-3">
               <p className="text-xs text-muted">No live virtual classes registered yet.</p>
               <Link to="/learn-online" className="inline-block px-5 py-2.5 bg-accent text-foreground text-xs font-bold rounded">
                 EXPLORE LIVE VIRTUAL CLASSES
@@ -179,13 +193,13 @@ export default function ProfilePage() {
           )}
 
           {activeTab === 'messages' && (
-            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+            <div className="p-8 bg-surface border border-secondary rounded-[20px] text-center space-y-3">
               <p className="text-xs text-muted">Your host messages will appear here once an experience is booked.</p>
             </div>
           )}
 
           {activeTab === 'settings' && (
-            <div className="p-8 bg-surface border border-secondary rounded-xl space-y-4 max-w-md">
+            <div className="p-8 bg-surface border border-secondary rounded-[20px] space-y-4 max-w-md">
               <h4 className="font-heading text-xl text-foreground">ACCOUNT PREFERENCES</h4>
               <div className="space-y-3 text-xs font-paragraph">
                 <div>

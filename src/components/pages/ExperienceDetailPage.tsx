@@ -35,9 +35,17 @@ export default function ExperienceDetailPage() {
             <span className="px-3 py-1 bg-accent text-foreground text-xs font-bold uppercase rounded-full">
               {experience.category}
             </span>
-            <span className="text-xs text-muted font-medium flex items-center">
-              <MapPin className="w-3.5 h-3.5 text-accent-dark mr-1" /> {experience.location}
-            </span>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(experience.location + ', India')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-accent-dark hover:text-foreground font-semibold flex items-center"
+              title="Open meeting spot on Google Maps"
+            >
+              <MapPin className="w-3.5 h-3.5 text-accent-dark mr-1" />
+              <span>{experience.location}</span>
+              <span className="ml-1 text-[11px]">↗ (Google Maps)</span>
+            </a>
           </div>
           <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">
             {experience.title.toUpperCase()}
@@ -46,7 +54,7 @@ export default function ExperienceDetailPage() {
         </div>
 
         {/* Gallery Hero */}
-        <div className="grid md:grid-cols-12 gap-4 h-[420px] rounded-2xl overflow-hidden border border-secondary">
+        <div className="grid md:grid-cols-12 gap-4 h-[420px] rounded-[28px] overflow-hidden border border-secondary">
           <div className="md:col-span-8 h-full">
             <SafeImage src={experience.image} alt={experience.title} className="w-full h-full object-cover" />
           </div>
@@ -72,7 +80,7 @@ export default function ExperienceDetailPage() {
               <h3 className="font-heading text-3xl text-foreground">YOUR DAY ITINERARY</h3>
               <div className="space-y-4">
                 {experience.itinerary.map((item, idx) => (
-                  <div key={idx} className="flex space-x-4 p-4 bg-surface border border-secondary rounded-xl">
+                  <div key={idx} className="flex space-x-4 p-4 bg-surface border border-secondary rounded-[20px]">
                     <div className="px-3 py-1 bg-accent/20 text-accent-dark font-heading text-sm rounded-md self-start shrink-0">
                       {item.time}
                     </div>
@@ -86,7 +94,7 @@ export default function ExperienceDetailPage() {
 
             {/* Section: Host Profile */}
             {host && (
-              <div className="p-8 bg-surface border border-secondary rounded-2xl space-y-6">
+              <div className="p-8 bg-surface border border-secondary rounded-[28px] space-y-6">
                 <span className="font-heading text-xs text-accent-dark tracking-widest uppercase">MEET YOUR CULTURAL AMBASSADOR</span>
                 <div className="flex items-start space-x-4">
                   <SafeImage src={host.avatar} alt={host.name} className="w-20 h-20 rounded-full object-cover border-2 border-accent shrink-0" />
@@ -141,7 +149,7 @@ export default function ExperienceDetailPage() {
 
           {/* Right Column: Sticky Desktop Booking Module */}
           <div className="lg:col-span-4 sticky top-28 space-y-6">
-            <div className="bg-surface border border-secondary rounded-2xl p-6 shadow-md space-y-6">
+            <div className="bg-surface border border-secondary rounded-[28px] p-6 shadow-md space-y-6">
               <div className="flex items-baseline justify-between border-b border-secondary pb-4">
                 <div>
                   <span className="font-heading text-3xl text-foreground">₹{experience.priceINR}</span>

@@ -44,13 +44,13 @@ export default function QuizzesPage() {
         {/* Quiz Catalog Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {filteredQuizzes.map((quiz) => (
-            <div key={quiz.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div key={quiz.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="h-52 relative">
                 <SafeImage src={quiz.image} alt={quiz.title} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
                   {quiz.difficulty} DIFFICULTY
                 </div>
-                <div className="absolute top-3 right-3 bg-foreground text-background px-2.5 py-0.5 rounded text-[10px] font-bold uppercase flex items-center">
+                <div className="absolute top-3 right-3 bg-accent/20 text-accent-dark px-2.5 py-0.5 rounded text-[10px] font-bold uppercase flex items-center">
                   <Award className="w-3.5 h-3.5 mr-1 text-accent" /> BADGE REWARD
                 </div>
               </div>
@@ -70,7 +70,7 @@ export default function QuizzesPage() {
 
                   <Link
                     to={`/quiz/${quiz.id}`}
-                    className="w-full py-3 bg-foreground hover:bg-foreground/90 text-background font-paragraph text-xs font-bold tracking-wider rounded-lg text-center transition-all block"
+                    className="w-full py-3 bg-accent hover:bg-accent-hover text-foreground shadow-sm font-paragraph text-xs font-bold tracking-wider rounded-lg text-center transition-all block"
                   >
                     START QUIZ NOW
                   </Link>

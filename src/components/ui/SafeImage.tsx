@@ -7,7 +7,13 @@ interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 const DEFAULT_FALLBACK = 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=1000&auto=format&fit=crop';
 
 export function SafeImage({ src, alt, className, fallbackSrc = DEFAULT_FALLBACK, ...props }: SafeImageProps) {
-  const [imgSrc, setImgSrc] = useState(src || fallbackSrc);
+  let initialSrc = src;
+  if (initialSrc && initialSrc.startsWith('/') && !initialSrc.startsWith('http')) {
+    const base = import.meta.env.BASE_URL;
+    initialSrc = base + (initialSrc.startsWith('/') ? initialSrc.slice(1) : initialSrc);
+  }
+  
+  const [imgSrc, setImgSrc] = useState(initialSrc || fallbackSrc);
   const [hasError, setHasError] = useState(false);
 
   const handleError = () => {

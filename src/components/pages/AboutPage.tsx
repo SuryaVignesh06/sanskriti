@@ -15,7 +15,7 @@ export default function AboutPage() {
         </div>
 
         {/* Mission Manifesto Block */}
-        <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-2xl space-y-6">
+        <div className="p-8 lg:p-12 bg-surface border border-secondary rounded-[28px] space-y-6">
           <h2 className="font-heading text-3xl sm:text-4xl text-foreground">WHAT MAKES SANSKRITI DIFFERENT</h2>
           <div className="grid md:grid-cols-3 gap-8 pt-4">
             <div className="space-y-2">
@@ -40,7 +40,7 @@ export default function AboutPage() {
         </div>
 
         {/* Call to Action */}
-        <div className="bg-foreground text-background p-10 rounded-2xl text-center space-y-6">
+        <div className="bg-surface text-foreground p-10 border border-secondary rounded-[28px] text-center space-y-6">
           <h2 className="font-heading text-4xl text-background">JOIN THE CULTURAL MOVEMENT</h2>
           <p className="font-paragraph text-xs sm:text-sm text-background/80 max-w-xl mx-auto">
             Whether you want to explore experiences, learn live online, or become an Ambassador, SANSKRITI is your doorway to living culture.

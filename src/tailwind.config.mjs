@@ -19,30 +19,62 @@ export default {
                 '9xl': ['8rem', { lineHeight: '1', letterSpacing: '-0.035em', fontWeight: '900' }],
             },
             fontFamily: {
-                heading: ['"Bebas Neue"', 'sans-serif'],
-                paragraph: ['"Poppins"', 'sans-serif']
+                heading: ['"Oswald"', 'sans-serif'],
+                paragraph: ['"Manrope"', 'sans-serif'],
+                samarkan: ['"Samarkan"', '"Yatra One"', '"Rozha One"', 'serif']
             },
             colors: {
-                background: '#FFFFFF',
-                surface: '#F7F7F4',
-                foreground: '#151515',
-                primary: '#151515',
+                background: '#FCFCFA',
+                surface: '#F5F4F0',
+                foreground: '#111111',
+                primary: '#111111',
                 'primary-foreground': '#FFFFFF',
-                secondary: '#E8E8E8',
-                'secondary-foreground': '#151515',
+                secondary: '#E7E5DF',
+                'secondary-foreground': '#5F5F5A',
                 accent: {
-                    DEFAULT: '#F4C430',
-                    hover: '#E5B320',
-                    light: '#FFF9E6',
-                    dark: '#D4A017'
+                    DEFAULT: '#F4B93A',
+                    hover: '#D98C22',
+                    light: '#FFF2CC',
+                    dark: '#D98C22'
+                },
+                tiranga: {
+                    saffron: '#FF9933',
+                    white: '#FFFFFF',
+                    green: '#138808'
                 },
                 muted: {
-                    DEFAULT: '#6F6F6F',
-                    light: '#9E9E9E',
-                    dark: '#424242'
+                    DEFAULT: '#94948D',
+                    light: '#E7E5DF',
+                    dark: '#5F5F5A'
                 },
-                border: '#E8E8E8'
+                border: '#E7E5DF',
+                illustration: {
+                    terracotta: '#C95E2F',
+                    orange: '#D96A32',
+                    saffron: '#E8892E',
+                    sand: '#F4D18A',
+                    green: '#58745A',
+                    teal: '#285B5D',
+                    indigo: '#37466E'
+                }
             },
+            borderRadius: {
+                none: '0',
+                sm: '12px',
+                DEFAULT: '16px',
+                md: '20px',
+                lg: '28px',
+                xl: '36px',
+                '2xl': '40px',
+                '3xl': '48px',
+                full: '9999px',
+            },
+            boxShadow: {
+                sm: '0 4px 16px rgba(20,20,15,0.06)',
+                DEFAULT: '0 10px 28px rgba(20,20,15,0.08)',
+                md: '0 18px 50px rgba(20,20,15,0.12)',
+                lg: '0 28px 80px rgba(20,20,15,0.14)',
+            }
         },
     },
     future: {
@@ -50,4 +82,3 @@ export default {
     },
     plugins: [require('@tailwindcss/container-queries'), require('@tailwindcss/typography')],
 }
-

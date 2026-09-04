@@ -26,16 +26,28 @@ export default function StatesPage() {
     <div className="bg-background text-foreground font-paragraph min-h-screen py-16">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 space-y-16">
         {/* Page Header */}
-        <div className="space-y-4 max-w-3xl">
-          <span className="font-heading text-xs text-accent-dark tracking-widest uppercase">EXPLORE ALL 28 STATES & UNION TERRITORIES</span>
-          <h1 className="font-heading text-5xl sm:text-6xl text-foreground">EXPLORE INDIA'S CULTURAL MAP</h1>
-          <p className="font-paragraph text-muted text-base">
-            Every state of India carries centuries of distinct classical art, temple traditions, regional cuisines, and living local heritage.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4 max-w-3xl">
+            <span className="font-heading text-xs text-accent-dark tracking-widest uppercase">EXPLORE ALL 28 STATES & UNION TERRITORIES</span>
+            <h1 className="font-heading text-5xl sm:text-6xl text-foreground">EXPLORE INDIA'S CULTURAL MAP</h1>
+            <p className="font-paragraph text-muted text-base">
+              Every state of India carries centuries of distinct classical art, temple traditions, regional cuisines, and living local heritage.
+            </p>
+          </div>
+          <div>
+            <Link
+              to="/explore-india"
+              className="inline-flex items-center space-x-2 px-6 py-3 bg-accent hover:bg-accent-hover text-foreground font-heading text-sm font-bold tracking-wider rounded-xl transition-all shadow-sm"
+            >
+              <MapPin className="w-4 h-4" />
+              <span>OPEN INTERACTIVE MAP</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
         </div>
 
         {/* Featured State Spotlight - Andhra Pradesh */}
-        <div className="bg-surface border border-secondary rounded-2xl overflow-hidden shadow-sm grid lg:grid-cols-12">
+        <div className="bg-surface border border-secondary rounded-[28px] overflow-hidden shadow-sm grid lg:grid-cols-12">
           <div className="lg:col-span-7 p-8 lg:p-12 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div className="inline-flex items-center space-x-2 px-3 py-1 bg-accent/20 text-accent-dark rounded-full text-xs font-bold uppercase">
@@ -62,7 +74,7 @@ export default function StatesPage() {
             <div className="pt-4">
               <Link
                 to={`/state/${featuredState.key}`}
-                className="inline-flex items-center px-6 py-3.5 bg-foreground hover:bg-foreground/90 text-background font-paragraph text-xs font-bold tracking-wider rounded-lg transition-all"
+                className="inline-flex items-center px-6 py-3.5 bg-accent hover:bg-accent-hover text-foreground shadow-sm font-paragraph text-xs font-bold tracking-wider rounded-lg transition-all"
               >
                 <span>EXPLORE {featuredState.name.toUpperCase()} CULTURE</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -125,7 +137,7 @@ export default function StatesPage() {
               <Link
                 key={st.key}
                 to={`/state/${st.key}`}
-                className="group bg-surface border border-secondary rounded-xl overflow-hidden hover:border-foreground shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                className="group bg-surface border border-secondary rounded-[20px] overflow-hidden hover:border-foreground shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
               >
                 <div className="relative h-44 overflow-hidden">
                   <SafeImage
@@ -133,7 +145,7 @@ export default function StatesPage() {
                     alt={st.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-3 left-3 bg-foreground/80 backdrop-blur-sm text-background px-2.5 py-0.5 rounded text-[10px] font-bold uppercase">
+                  <div className="absolute top-3 left-3 bg-surface/90 backdrop-blur-sm text-foreground px-2.5 border border-secondary py-0.5 rounded text-[10px] font-bold uppercase">
                     {st.region}
                   </div>
                 </div>

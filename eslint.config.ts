@@ -1,6 +1,5 @@
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
-import eslintPluginAstro from 'eslint-plugin-astro';
 import importPlugin from 'eslint-plugin-import';
 import reactPlugin from 'eslint-plugin-react';
 import globals from 'globals';
@@ -8,9 +7,8 @@ import useImageComponent from './eslint-rules/use-image-component';
 import noEarlyReturnBeforeScrollRef from './eslint-rules/no-early-return-before-scroll-ref';
 
 export default [
-  ...eslintPluginAstro.configs.recommended,
   {
-    ignores: ['node_modules', 'dist', '.astro', 'public', 'eslint-rules'],
+    ignores: ['node_modules', 'dist', 'public', 'eslint-rules'],
   },
   {
     plugins: {
@@ -47,7 +45,7 @@ export default [
       },
       'import/resolver': {
         node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx', '.astro'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
       },
     },
@@ -99,12 +97,4 @@ export default [
       ],
 
     },
-  },
-  {
-    files: ['**/*.astro'],
-    rules: {
-      'astro/no-conflict-set-directives': 'error',
-      'astro/no-unused-define-vars-in-style': 'error',
-    },
-  },
 ];

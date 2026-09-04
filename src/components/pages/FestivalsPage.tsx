@@ -44,7 +44,7 @@ export default function FestivalsPage() {
         {/* Festival Cards Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredFestivals.map((fest) => (
-            <div key={fest.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div key={fest.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="h-56 relative">
                 <SafeImage src={fest.image} alt={fest.name} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
@@ -66,7 +66,7 @@ export default function FestivalsPage() {
                 <div className="pt-4 border-t border-secondary">
                   <Link
                     to={`/festival/${fest.id}`}
-                    className="w-full py-3 bg-foreground hover:bg-foreground/90 text-background font-paragraph text-xs font-bold tracking-wider rounded-lg text-center transition-all block"
+                    className="w-full py-3 bg-accent hover:bg-accent-hover text-foreground shadow-sm font-paragraph text-xs font-bold tracking-wider rounded-lg text-center transition-all block"
                   >
                     EXPLORE {fest.name.toUpperCase()} JOURNEY
                   </Link>

@@ -24,7 +24,7 @@ export default function FestivalDetailPage() {
       </div>
 
       {/* Hero Banner */}
-      <section className="relative h-[48vh] min-h-[350px] flex items-end overflow-hidden bg-foreground text-background">
+      <section className="relative h-[48vh] min-h-[350px] flex items-end overflow-hidden bg-accent text-foreground">
         <SafeImage
           src={festival.image}
           alt={festival.name}
@@ -48,19 +48,19 @@ export default function FestivalDetailPage() {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-16 space-y-16">
         {/* Section 1: Cultural Overview */}
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="p-8 bg-surface border border-secondary rounded-2xl space-y-4">
+          <div className="p-8 bg-surface border border-secondary rounded-[28px] space-y-4">
             <h3 className="font-heading text-3xl text-foreground">WHAT IS THIS FESTIVAL?</h3>
             <p className="font-paragraph text-sm text-muted leading-relaxed">{festival.description}</p>
           </div>
 
-          <div className="p-8 bg-surface border border-secondary rounded-2xl space-y-4">
+          <div className="p-8 bg-surface border border-secondary rounded-[28px] space-y-4">
             <h3 className="font-heading text-3xl text-foreground">WHY IT MATTERS</h3>
             <p className="font-paragraph text-sm text-muted leading-relaxed">{festival.significance}</p>
           </div>
         </div>
 
         {/* Section 2: How Locals Celebrate */}
-        <div className="p-8 bg-surface border border-secondary rounded-2xl space-y-4">
+        <div className="p-8 bg-surface border border-secondary rounded-[28px] space-y-4">
           <div className="flex items-center space-x-2 text-accent-dark font-heading text-sm uppercase">
             <Sparkles className="w-4 h-4" />
             <span>AUTHENTIC CELEBRATION CUSTOMS</span>
@@ -76,10 +76,17 @@ export default function FestivalDetailPage() {
           <h3 className="font-heading text-3xl text-foreground">WHERE TO EXPERIENCE {festival.name.toUpperCase()}</h3>
           <div className="flex flex-wrap gap-3">
             {festival.locations.map((loc) => (
-              <div key={loc} className="flex items-center space-x-2 px-5 py-3 bg-surface border border-secondary rounded-xl font-paragraph text-sm font-semibold text-foreground">
+              <a
+                key={loc}
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc + ', India')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 px-5 py-3 bg-surface border border-secondary hover:border-foreground rounded-[20px] font-paragraph text-sm font-semibold text-foreground transition-all group"
+              >
                 <MapPin className="w-4 h-4 text-accent-dark" />
                 <span>{loc}</span>
-              </div>
+                <span className="text-xs text-muted group-hover:text-foreground">↗</span>
+              </a>
             ))}
           </div>
         </div>
@@ -91,7 +98,7 @@ export default function FestivalDetailPage() {
           {relatedExperiences.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedExperiences.map((exp) => (
-                <div key={exp.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm flex flex-col justify-between">
+                <div key={exp.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm flex flex-col justify-between">
                   <div className="h-52 relative">
                     <SafeImage src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
@@ -107,7 +114,7 @@ export default function FestivalDetailPage() {
                       <span className="font-heading text-lg text-foreground">₹{exp.priceINR}</span>
                       <Link
                         to={`/experience/${exp.id}`}
-                        className="px-4 py-2 bg-foreground text-background font-paragraph text-xs font-bold rounded"
+                        className="px-4 py-2 bg-accent text-foreground font-paragraph text-xs font-bold rounded"
                       >
                         VIEW DETAILS
                       </Link>
@@ -117,7 +124,7 @@ export default function FestivalDetailPage() {
               ))}
             </div>
           ) : (
-            <div className="p-8 bg-surface border border-secondary rounded-xl text-center space-y-3">
+            <div className="p-8 bg-surface border border-secondary rounded-[20px] text-center space-y-3">
               <p className="font-paragraph text-sm text-muted">
                 Explore local Ambassador experiences hosted during {festival.name}.
               </p>

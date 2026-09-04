@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { SafeImage } from '@/components/ui/SafeImage';
 import { CULTURAL_EXPERIENCES, CULTURAL_AMBASSADORS, INDIAN_STATES } from '@/lib/sanskritiData';
-import { Search, MapPin, Filter, ShieldCheck, ArrowRight, X } from 'lucide-react';
+import { Search, MapPin, Filter, ShieldCheck, ArrowRight, X, ExternalLink } from 'lucide-react';
 
 export default function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -51,7 +51,7 @@ export default function ExplorePage() {
         </div>
 
         {/* Search & Filter Bar Container */}
-        <div className="bg-surface border border-secondary p-6 rounded-xl space-y-6 shadow-sm">
+        <div className="bg-surface border border-secondary p-6 rounded-[20px] space-y-6 shadow-sm">
           {/* Main Search Input */}
           <div className="relative">
             <Search className="w-5 h-5 text-muted absolute left-4 top-1/2 -translate-y-1/2" />
@@ -152,7 +152,7 @@ export default function ExplorePage() {
             {filteredExperiences.map((exp) => {
               const host = CULTURAL_AMBASSADORS.find(a => a.id === exp.hostId);
               return (
-                <div key={exp.id} className="bg-surface border border-secondary rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+                <div key={exp.id} className="bg-surface border border-secondary rounded-[20px] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
                   <div className="relative h-60">
                     <SafeImage src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3 bg-accent text-foreground px-3 py-1 rounded-full text-xs font-bold">
@@ -162,9 +162,21 @@ export default function ExplorePage() {
 
                   <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                     <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-xs text-muted">
-                        <MapPin className="w-3.5 h-3.5 text-accent-dark" />
-                        <span>{exp.location}</span>
+                      <div className="flex items-center justify-between text-xs text-muted">
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="w-3.5 h-3.5 text-accent-dark" />
+                          <span>{exp.location}</span>
+                        </div>
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(exp.location + ', India')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] font-semibold text-accent-dark hover:text-foreground flex items-center"
+                          title="Open in Google Maps"
+                        >
+                          <span>MAP</span>
+                          <ExternalLink className="w-3 h-3 ml-0.5" />
+                        </a>
                       </div>
                       <h3 className="font-heading text-xl text-foreground">
                         <Link to={`/experience/${exp.id}`} className="hover:text-accent-dark transition-colors">
@@ -194,7 +206,7 @@ export default function ExplorePage() {
 
                     <Link
                       to={`/experience/${exp.id}`}
-                      className="w-full py-2.5 bg-foreground hover:bg-foreground/90 text-background font-paragraph text-xs font-bold tracking-wider rounded-lg text-center transition-all block"
+                      className="w-full py-2.5 bg-accent hover:bg-accent-hover text-foreground shadow-sm font-paragraph text-xs font-bold tracking-wider rounded-lg text-center transition-all block"
                     >
                       VIEW EXPERIENCE DETAILS
                     </Link>
@@ -204,7 +216,7 @@ export default function ExplorePage() {
             })}
           </div>
         ) : (
-          <div className="py-20 text-center space-y-4 bg-surface border border-secondary rounded-xl">
+          <div className="py-20 text-center space-y-4 bg-surface border border-secondary rounded-[20px]">
             <Filter className="w-12 h-12 text-muted mx-auto" />
             <h3 className="font-heading text-2xl text-foreground">NO EXPERIENCES MATCH YOUR CRITERIA</h3>
             <p className="font-paragraph text-sm text-muted">Try resetting your category or location filters.</p>

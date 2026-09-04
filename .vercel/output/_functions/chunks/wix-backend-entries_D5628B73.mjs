@@ -1,0 +1,5 @@
+const entries = {
+  
+};
+
+export { entries };
