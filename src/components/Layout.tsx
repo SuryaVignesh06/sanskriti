@@ -317,7 +317,7 @@ export default function Layout() {
         <div 
           className="absolute bottom-0 left-0 right-0 h-[140px] pointer-events-none opacity-15 z-[1]"
           style={{
-            backgroundImage: `url(`\${import.meta.env.BASE_URL}images/ill_india_skyline.jpg')`,
+            backgroundImage: `url('${import.meta.env.BASE_URL}images/ill_india_skyline.jpg')`,
             backgroundSize: 'contain',
             backgroundPosition: 'center bottom',
             backgroundRepeat: 'repeat-x',

@@ -14,6 +14,48 @@ export interface IndianState {
   historyHighlight: string;
   youtubeVideoId?: string;
   highlighted?: boolean;
+  language?: string;
+  architecture?: string[];
+  textiles?: string[];
+  art?: string[];
+  literature?: string;
+  traditions?: string[];
+  natureAndWildlife?: string[];
+  majorDestinations?: string[];
+  lesserKnownDestinations?: string[];
+}
+
+export interface Destination {
+  slug: string;
+  stateKey: string;
+  name: string;
+  type: 'Iconic' | 'Hidden';
+  location: string;
+  illustration: string;
+  culturalSummary: string;
+  category: string;
+  bestSeason: string;
+  whyItMatters: string;
+  whatToSee: string[];
+  nearbyExperiences?: string[];
+  guideAvailability?: boolean;
+}
+
+export interface GuideProfile {
+  slug: string;
+  name: string;
+  type: string;
+  city: string;
+  stateKey: string;
+  languages: string[];
+  specialties: string[];
+  verified: boolean;
+  experienceCount: number;
+  rating: number;
+  reviewsCount: number;
+  avatar: string;
+  about: string;
+  experiencesOffered?: string[];
 }
 
 export interface CulturalAmbassador {
@@ -1195,3 +1237,128 @@ export function searchSanskriti(query: string) {
 
   return { states, experiences, festivals, onlineClasses };
 }
+
+export const DESTINATIONS: Destination[] = [
+  {
+    slug: 'dest-1',
+    stateKey: 'rajasthan',
+    name: 'Jaipur Old City',
+    type: 'Iconic',
+    location: 'Jaipur, Rajasthan',
+    illustration: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=800&auto=format&fit=crop',
+    culturalSummary: 'The Pink City known for its royal palaces and bustling bazaars.',
+    category: 'Heritage',
+    bestSeason: 'Oct - March',
+    whyItMatters: 'Jaipur represents the pinnacle of Rajput architecture and city planning in the 18th century.',
+    whatToSee: ['Hawa Mahal', 'City Palace', 'Jantar Mantar'],
+    nearbyExperiences: ['holi-jaipur-family'],
+    guideAvailability: true
+  },
+  {
+    slug: 'dest-2',
+    stateKey: 'kerala',
+    name: 'Fort Kochi',
+    type: 'Iconic',
+    location: 'Kochi, Kerala',
+    illustration: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop',
+    culturalSummary: 'A historic port town blending Portuguese, Dutch, and British influences.',
+    category: 'History',
+    bestSeason: 'Sept - Feb',
+    whyItMatters: 'It was the center of the global spice trade for centuries, creating a unique melting pot of cultures.',
+    whatToSee: ['Chinese Fishing Nets', 'Mattancherry Palace', 'Jewish Synagogue'],
+    nearbyExperiences: [],
+    guideAvailability: true
+  },
+  {
+    slug: 'hidden-1',
+    stateKey: 'rajasthan',
+    name: 'Bundi',
+    type: 'Hidden',
+    location: 'Bundi, Rajasthan',
+    illustration: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?q=80&w=800&auto=format&fit=crop',
+    culturalSummary: 'A quiet town known for its ornate stepwells and miniature paintings.',
+    category: 'Heritage',
+    bestSeason: 'Oct - March',
+    whyItMatters: 'Bundi offers a tranquil alternative to major cities, preserving stunning examples of Baoris (stepwells).',
+    whatToSee: ['Taragarh Fort', 'Raniji Ki Baori', 'Garh Palace'],
+    nearbyExperiences: [],
+    guideAvailability: true
+  }
+];
+
+export const GUIDE_PROFILES: GuideProfile[] = [
+  {
+    slug: 'guide-1',
+    name: 'Rajendra Singh',
+    type: 'Tourist Guide',
+    city: 'Jaipur',
+    stateKey: 'rajasthan',
+    languages: ['English', 'Hindi', 'French'],
+    specialties: ['History', 'Architecture'],
+    verified: true,
+    experienceCount: 500,
+    rating: 4.9,
+    reviewsCount: 120,
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
+    about: 'A passionate historian bringing the forts and palaces of Rajasthan to life.',
+    experiencesOffered: []
+  },
+  {
+    slug: 'guide-2',
+    name: 'Priya Nambiar',
+    type: 'Cultural Ambassador',
+    city: 'Kochi',
+    stateKey: 'kerala',
+    languages: ['English', 'Malayalam'],
+    specialties: ['Spice Trade History', 'Cuisine'],
+    verified: true,
+    experienceCount: 300,
+    rating: 4.95,
+    reviewsCount: 85,
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=400&auto=format&fit=crop',
+    about: 'Growing up in Fort Kochi, Priya shares the culinary secrets and stories of her ancestors.',
+    experiencesOffered: []
+  }
+];
+
+export function getQuizForState(stateKey: string): CulturalQuiz {
+  const state = INDIAN_STATES.find(s => s.key === stateKey) || INDIAN_STATES[0];
+  const existing = CULTURAL_QUIZZES.find(q => q.stateKey === stateKey);
+  if (existing) return existing;
+
+  return {
+    id: `quiz-${state.key}`,
+    title: `${state.name} Cultural Heritage Quiz`,
+    category: 'Regional Culture',
+    stateKey: state.key,
+    difficulty: 'Medium',
+    description: `Test your knowledge about the rich traditions, crafts, and history of ${state.name}.`,
+    image: state.image,
+    passingScorePercent: 70,
+    badgeAwarded: `${state.name} Cultural Scholar`,
+    questions: [
+      {
+        id: 1,
+        question: `Which classical or regional dance form originated in or is celebrated in ${state.name}?`,
+        options: [state.danceForms[0] || 'Kathak', 'Bharatanatyam', 'Bhangra', 'Garba'],
+        correctAnswerIndex: 0,
+        explanation: `${state.danceForms[0] || 'This dance'} is deeply intertwined with the cultural expressions of ${state.name}.`
+      },
+      {
+        id: 2,
+        question: `What is the capital of ${state.name}?`,
+        options: [state.capital, 'New Delhi', 'Mumbai', 'Kolkata'],
+        correctAnswerIndex: 0,
+        explanation: `${state.capital} serves as the administrative and cultural hub of ${state.name}.`
+      },
+      {
+        id: 3,
+        question: `Which of the following traditional crafts or textiles is renowned from ${state.name}?`,
+        options: [state.crafts[0] || 'Pashmina', 'Kanchipuram Silk', 'Chanderi', 'Bandhani'],
+        correctAnswerIndex: 0,
+        explanation: `${state.crafts[0] || 'Handicrafts'} are a hallmark of artisanal mastery in ${state.name}.`
+      }
+    ]
+  };
+}
+

@@ -141,7 +141,7 @@ const router = createBrowserRouter([
     ],
   },
 ], {
-  basename: '/sanskriti/',
+  basename: import.meta.env.BASE_URL,
 });
 
 export default function AppRouter() {

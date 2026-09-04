@@ -1,12 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { SafeImage } from '@/components/ui/SafeImage';
-import { GUIDE_PROFILES, INDIAN_STATES, CULTURAL_EXPERIENCES } from '@/lib/sanskritiData';
-import { MapPin, ArrowLeft, ShieldCheck, Star, MessageCircle, Calendar, Languages, Map } from 'lucide-react';
+import { GUIDE_PROFILES, INDIAN_STATES, CULTURAL_EXPERIENCES, GuideProfile } from '@/lib/sanskritiData';
+import { MapPin, ArrowLeft, ShieldCheck, Star, MessageCircle, Calendar, Languages, Map, Sparkles } from 'lucide-react';
 
 export default function GuideProfilePage() {
   const { slug } = useParams<{ slug: string }>();
   
-  const guide = GUIDE_PROFILES ? GUIDE_PROFILES.find(g => g.slug === slug) : null;
+  const guide = GUIDE_PROFILES ? GUIDE_PROFILES.find((g: GuideProfile) => g.slug === slug) : null;
   const stateData = guide ? INDIAN_STATES.find(s => s.key === guide.stateKey) : null;
   
   if (!guide || !stateData) {
@@ -103,7 +103,7 @@ export default function GuideProfilePage() {
                     <Languages className="w-4 h-4 mr-1.5" /> Fluent In
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {guide.languages.map(l => (
+                    {guide.languages.map((l: string) => (
                       <span key={l} className="bg-background border border-secondary px-2 py-1 rounded text-xs">{l}</span>
                     ))}
                   </div>
@@ -114,7 +114,7 @@ export default function GuideProfilePage() {
                     <Sparkles className="w-4 h-4 mr-1.5" /> Specialties
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {guide.specialties.map(s => (
+                    {guide.specialties.map((s: string) => (
                       <span key={s} className="bg-accent/10 border border-accent/30 text-accent-dark px-2 py-1 rounded text-xs">{s}</span>
                     ))}
                   </div>

@@ -222,7 +222,7 @@ export default function HomePage() {
             <div
               className="absolute right-4 top-1/2 -translate-y-1/2 w-[45%] h-[70%] opacity-10 pointer-events-none"
               style={{
-                backgroundImage: `url(`\${import.meta.env.BASE_URL}images/ill_india_skyline.jpg')`,
+                backgroundImage: `url('${import.meta.env.BASE_URL}images/ill_india_skyline.jpg')`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center right',
                 backgroundRepeat: 'no-repeat',

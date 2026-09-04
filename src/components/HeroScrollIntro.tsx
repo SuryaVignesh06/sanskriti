@@ -79,7 +79,7 @@ export function HeroScrollIntro() {
               <div 
                 className="font-heading text-[20vw] sm:text-[24vw] lg:text-[26vw] font-black uppercase tracking-tighter leading-none text-transparent bg-clip-text text-center select-none"
                 style={{
-                  backgroundImage: `url(`\${import.meta.env.BASE_URL}images/ill_hero_home.jpg')`,
+                  backgroundImage: `url('${import.meta.env.BASE_URL}images/ill_hero_home.jpg')`,
                   backgroundPosition: 'center',
                   backgroundSize: 'cover',
                   WebkitBackgroundClip: 'text',

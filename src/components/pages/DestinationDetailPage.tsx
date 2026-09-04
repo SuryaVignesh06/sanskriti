@@ -1,12 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { SafeImage } from '@/components/ui/SafeImage';
-import { DESTINATIONS, INDIAN_STATES } from '@/lib/sanskritiData';
+import { DESTINATIONS, INDIAN_STATES, Destination } from '@/lib/sanskritiData';
 import { MapPin, ArrowLeft, ArrowRight, Sun, Calendar, Info, Clock, Route } from 'lucide-react';
 
 export default function DestinationDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   
-  const destination = DESTINATIONS ? DESTINATIONS.find(d => d.slug === slug) : null;
+  const destination = DESTINATIONS ? DESTINATIONS.find((d: Destination) => d.slug === slug) : null;
   const stateData = destination ? INDIAN_STATES.find(s => s.key === destination.stateKey) : null;
 
   if (!destination || !stateData) {
@@ -108,7 +108,7 @@ export default function DestinationDetailPage() {
             <div className="space-y-6 pt-6 border-t border-secondary">
               <h2 className="font-heading text-3xl">What To See</h2>
               <ul className="space-y-4">
-                {destination.whatToSee.map((item, i) => (
+                {destination.whatToSee.map((item: string, i: number) => (
                   <li key={i} className="flex items-start">
                     <div className="w-6 h-6 rounded-full bg-accent text-foreground flex items-center justify-center font-bold text-xs mt-0.5 mr-3 shrink-0">
                       {i + 1}

@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { SafeImage } from '@/components/ui/SafeImage';
-import { INDIAN_STATES, IndianState, DESTINATIONS } from '@/lib/sanskritiData';
-import { Search, MapPin, ArrowRight, ExternalLink, Sparkles, X, Grid, Compass, Info, Map as MapIcon, ChevronRight } from 'lucide-react';
+import { INDIAN_STATES, IndianState, DESTINATIONS, Destination } from '@/lib/sanskritiData';
+import { Search, MapPin, ArrowRight, ExternalLink, Sparkles, X, Grid, Compass, Info, Map as MapIcon, ChevronRight, ShieldCheck } from 'lucide-react';
 
 // Map coordinate nodes for 28 States & 8 UTs for interactive map representation
 interface StateMapNode {
